@@ -88,6 +88,11 @@ section{padding:72px 0}
   background:repeating-linear-gradient(115deg,rgba(255,255,255,.025) 0 2px,transparent 2px 9px)}
 .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:14px;border:1px solid var(--line);border-top:0;border-radius:0 0 var(--radius) var(--radius);background:var(--panel)}
 .stage.joined{border-radius:var(--radius) var(--radius) 0 0}
+.demo-banner{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:center;gap:4px 16px;padding:14px 16px;border:1px solid var(--line2);border-bottom:0;border-radius:var(--radius) var(--radius) 0 0;background:linear-gradient(90deg,rgba(125,69,214,.35),rgba(105,233,172,.18));text-align:center}
+.demo-banner:hover{text-decoration:none;background:linear-gradient(90deg,rgba(125,69,214,.5),rgba(105,233,172,.26))}
+.demo-banner b{font:700 clamp(1.25rem,3.2vw,2rem)/1.1 var(--display);letter-spacing:.02em;text-transform:uppercase;color:var(--text)}
+.demo-banner span{font:600 .95rem var(--body);color:var(--teal)}
+.demo-banner + .stage{border-radius:0}
 .hint{font-size:.85rem;color:var(--dim)}
 .kbd{display:inline-block;min-width:20px;padding:1px 6px;border-radius:5px;border:1px solid var(--line2);background:var(--bg2);font:600 .78rem var(--display);text-align:center}
 
