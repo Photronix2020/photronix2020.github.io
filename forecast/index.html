@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ForeCast · Photronix Addons</title>
+<meta name="description" content="ForeCast, the rotation coach for every class in WoW: Forever. Try the live demo in your browser.">
+<link rel="icon" href="../img/forecast-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/site.css">
+<style>
+#fc{height:600px}
+.fc-mob{position:absolute;top:18px;right:18px;width:220px;background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:8px 10px;font-size:.82rem}
+.fc-mob .hp{height:10px;border-radius:5px;background:#3a1414;margin-top:5px;overflow:hidden}
+.fc-mob .hp i{display:block;height:100%;background:linear-gradient(90deg,#c62828,#ff5a4a);transition:width .2s}
+.fc-mob.dead{opacity:.5}
+#ring{position:absolute;left:50%;top:39%;width:0;height:0}
+#halo{position:absolute;left:-210px;top:-200px;width:420px;height:400px;overflow:visible}
+#haloIcons{position:absolute;left:0;top:0;width:0;height:0}
+.you{position:absolute;left:-17px;top:-30px;width:34px;height:60px;border-radius:18px 18px 10px 10px;background:radial-gradient(circle at 50% 25%,#e9d6b4 0 22%,transparent 23%),linear-gradient(#5a6e3a,#2f3d1e);box-shadow:0 8px 14px rgba(0,0,0,.5)}
+#cue{position:absolute;left:0;top:138px;transform:translateX(-50%)}
+.ico{position:absolute;width:40px;height:40px;border-radius:8px;border:2px solid #3b3560;box-shadow:0 2px 8px rgba(0,0,0,.5);transition:transform .15s,opacity .2s,filter .2s,border-color .15s;overflow:hidden;cursor:pointer;background:#111}
+.ico svg{width:100%;height:100%;display:block}
+.ico.faded{opacity:.28;filter:grayscale(1)}
+.ico.rot{opacity:.8;filter:none}
+.ico.red{border-color:#ff3b2a;transform:scale(1.35);box-shadow:0 0 16px rgba(255,59,42,.9);z-index:3;animation:pulse .5s infinite alternate}
+.ico.wait{border-color:#ffc83a;box-shadow:0 0 14px rgba(255,200,58,.7);z-index:2;opacity:1;filter:none}
+.ico.up{border-color:#4fe07f;box-shadow:0 0 12px rgba(79,224,127,.7);transform:scale(1.1);z-index:2;opacity:1;filter:none}
+.ico.gold{border-color:#ffb020;opacity:.9;filter:none}
+.ico .cd{position:absolute;inset:0;background:rgba(0,0,0,.6);transform-origin:bottom;pointer-events:none}
+.ico .t{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:700 .8rem var(--display);color:#fff;text-shadow:0 1px 3px #000;pointer-events:none}
+@keyframes pulse{to{box-shadow:0 0 26px rgba(255,59,42,1)}}
+.cue{font:700 .9rem var(--display);letter-spacing:.04em;text-shadow:0 2px 4px #000;white-space:nowrap}
+.hud{position:absolute;left:50%;bottom:64px;transform:translateX(-50%);background:rgba(12,10,26,.88);border:1px solid #4b3d80;border-radius:10px;padding:8px 10px 6px;width:min(420px,92%)}
+.hud .row{display:flex;gap:6px;justify-content:center;height:44px;align-items:center}
+.hud .row .ico{position:relative}
+.hud .lbl{text-align:center;font:600 .78rem var(--display);margin-top:6px;letter-spacing:.03em}
+.hud .dps{height:8px;background:#1d1a33;border-radius:4px;margin-top:6px;position:relative;overflow:hidden}
+.hud .dps i{position:absolute;left:0;top:0;bottom:0;transition:width .25s,background .25s}
+.hud .dps b{position:absolute;left:50%;top:-2px;bottom:-2px;width:2px;background:#fff;opacity:.7}
+.bar{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);display:flex;gap:4px;background:rgba(0,0,0,.55);padding:5px;border-radius:8px;border:1px solid rgba(255,255,255,.1)}
+.bar .slot{position:relative;width:38px;height:38px}
+.bar .slot .ico{position:relative;width:38px;height:38px;border-radius:6px;opacity:1;filter:none;transform:none;animation:none;box-shadow:none;border-color:#222}
+.bar .slot .k{position:absolute;top:1px;right:3px;font:700 .65rem var(--display);color:#fff;text-shadow:0 1px 2px #000;pointer-events:none;z-index:4}
+.bar .slot .glow{position:absolute;inset:-5px;border-radius:9px;pointer-events:none;opacity:0;transition:opacity .15s;z-index:3}
+.toast{position:absolute;left:50%;top:12px;transform:translateX(-50%);background:rgba(20,16,40,.92);border:1px solid #5b4aa0;border-radius:10px;padding:7px 12px;font-size:.85rem;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+.dmg{position:absolute;font:700 .95rem var(--display);color:#ffd27a;text-shadow:0 2px 3px #000;pointer-events:none;animation:rise 1s forwards}
+@keyframes rise{to{transform:translateY(-40px);opacity:0}}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.88rem;color:var(--muted)}
+.legend span::before{content:"";display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px;background:var(--c)}
+@media (max-width:640px){#fc{height:600px} #ring{transform:scale(.68);top:40%} .fc-mob{width:170px;right:10px;top:10px} .hud{bottom:62px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="../"><div class="orb"></div><span>Photronix Addons</span></a>
+  <nav class="nav">
+    <a class="on" href="./"><img src="../img/forecast-icon.png" alt="">ForeCast</a>
+    <a href="../gank/"><img src="../img/gank-icon.png" alt="">Gank You Very Much</a>
+    <a href="../packtrack/"><img src="../img/packtrack-icon.png" alt="">PackTrack</a>
+  </nav>
+</div></header>
+<main class="wrap">
+  <div class="page-head">
+    <img src="../img/forecast-icon.png" alt="ForeCast">
+    <div class="txt">
+      <div class="eyebrow">Rotation coach · every class · v0.7.8</div>
+      <h1>ForeCast</h1>
+      <p class="muted" style="max-width:640px">See your next cast before you need it. ForeCast knows your class, spec, level, spell ranks, talents, form and pet, and shows what to press next, and when, from level 1 to 60.</p>
+      <div class="btns"><a class="btn cf" href="https://www.curseforge.com/wow/addons/forecast">Download on CurseForge</a><a class="btn" href="https://photronix2020.github.io/ForeCast-Wiki/">Read the wiki</a><a class="btn" href="#demo">Try the demo</a></div>
+    </div>
+  </div>
+
+  <section id="demo" style="padding-top:24px">
+    <div class="eyebrow">Live demo</div>
+    <h2>Play a hunter pull</h2>
+    <p class="muted">A small recreation of ForeCast on a hunter. Click the red spell (on the halo, the window or your bar) or press its key. Watch green line up the next shot while you wait on Auto Shot.</p>
+    <div class="legend" style="margin:10px 0 16px">
+      <span style="--c:#ff3b2a">Red: cast now</span><span style="--c:#4fe07f">Green: next up</span><span style="--c:#ffc83a">Yellow: wait / gold: big cooldown ready</span>
+    </div>
+    <div id="fc" class="stage joined">
+      <div class="fc-mob" id="mob"><b id="mobName">Kobold Tunneler</b> <span class="muted">· level 12</span><div class="hp"><i id="hp" style="width:100%"></i></div></div>
+      <div class="toast" id="toast"></div>
+      <div id="ring">
+        <div class="you"></div>
+        <svg id="halo" viewBox="-210 -200 420 400"></svg>
+        <div id="haloIcons"></div>
+        <div class="cue" id="cue"></div>
+      </div>
+      <div class="hud" id="hud"><div class="row" id="hudRow"></div><div class="lbl" id="hudLbl">WAITING FOR TARGET</div><div class="dps"><i id="hudDps"></i><b></b></div></div>
+      <div class="bar" id="bar"></div>
+    </div>
+    <div class="controls">
+      <button class="btn small" id="auto">Let it play itself</button>
+      <button class="btn small" id="reset">New mob</button>
+      <label class="hint"><input type="checkbox" id="gauge" checked> DPS gauge over the halo</label>
+      <span class="hint">Keys <span class="kbd">1</span>–<span class="kbd">6</span> cast from the bar.</span>
+    </div>
+  </section>
+
+  <section style="padding-top:20px">
+    <div class="eyebrow">What it does</div>
+    <h2>Three colors, zero setup</h2>
+    <div class="grid3" style="margin-top:20px">
+      <div class="tile"><h3>Red: cast now</h3><p>Turns red inside your spell queue window, so your press fires the instant the ability is ready.</p></div>
+      <div class="tile"><h3>Green: next up</h3><p>The spell that turns red next, shown at the same time as red or yellow, counting down so you're ready.</p></div>
+      <div class="tile"><h3>Yellow: wait</h3><p>Let Auto Shot land, let your wand shoot, or hold your damage for threat. Gold marks a big cooldown that's ready: your call.</p></div>
+      <div class="tile"><h3>Combat halo</h3><p>Glowing arcs around your character with your spells on the ring, power and pet health rings, range icon and a DPS gauge.</p></div>
+      <div class="tile"><h3>Every class</h3><p>Rotations for all nine classes and tanks, with racials, forms, stances and pets, adapting the moment you learn something new.</p></div>
+      <div class="tile"><h3>Learns from your fights</h3><p>Fight lengths, damage per cast and your reaction time, to plan the next pull better. HOW shows what following the cues is worth.</p></div>
+      <div class="tile"><h3>Groups and PvP</h3><p>Waits for the tank and holds your damage near the threat limit. Against players it switches to burst, slows and earlier defenses.</p></div>
+      <div class="tile"><h3>Your own bars too</h3><p>The same colors glow on Blizzard, Bartender4, Dominos and ElvUI buttons, so you can play from your usual bars.</p></div>
+      <div class="tile"><h3>Your call</h3><p>Pass over a set-up step (pet, Hunter's Mark, an opener) for another spell and ForeCast carries on from the spell you chose.</p></div>
+    </div>
+  </section>
+
+  <section style="padding-top:10px">
+    <div class="eyebrow">In game</div>
+    <h2>What it looks like</h2>
+    <div class="grid3" style="margin-top:20px">
+      <figure class="tile" style="margin:0"><img src="../img/forecast-halo.jpg" alt="The halo" loading="lazy" style="border-radius:10px"><p style="margin-top:10px">The halo on a hunter: ranged spells left, melee right.</p></figure>
+      <figure class="tile" style="margin:0"><img src="../img/forecast-hud.jpg" alt="The HUD" loading="lazy" style="border-radius:10px"><p style="margin-top:10px">The ForeCast window: two clickable rows, range band, threat and DPS.</p></figure>
+    </div>
+    <p class="note" style="margin-top:24px">Free, no ads. Questions and bug reports go in the <a href="https://www.curseforge.com/wow/addons/forecast/comments">CurseForge comments</a>; every setting is explained in the <a href="https://photronix2020.github.io/ForeCast-Wiki/">wiki</a>.</p>
+  </section>
+</main>
+<footer><div class="wrap"><div><a href="../">Photronix Addons</a> · ForeCast</div><div>World of Warcraft is a trademark of Blizzard Entertainment. Fan-made, not affiliated with Blizzard.</div></div></footer>
+
+<script>
+(()=>{
+// Spell art: simple drawn glyphs (no game art).
+const G={
+  mark:['#7a1f2b','#e04656','<circle cx="20" cy="20" r="9" fill="none" stroke="#fff" stroke-width="3"/><circle cx="20" cy="20" r="3" fill="#fff"/><path d="M20 4v8M20 28v8M4 20h8M28 20h8" stroke="#fff" stroke-width="2.5"/>'],
+  sting:['#1f5a2a','#5fd36a','<path d="M8 30c6-2 4-10 11-11s6-9 13-11" fill="none" stroke="#e8ffd0" stroke-width="4" stroke-linecap="round"/><circle cx="32" cy="8" r="3" fill="#e8ffd0"/>'],
+  arcane:['#3b1f7a','#a46cff','<path d="M20 4l4 12 12 4-12 4-4 12-4-12-12-4 12-4z" fill="#f2e6ff"/>'],
+  multi:['#5a3a12','#e09a3a','<path d="M6 32L30 8M12 34L34 14M4 26L26 4" stroke="#fff4d8" stroke-width="3" stroke-linecap="round"/><path d="M30 8l-7 1 6 6zM34 14l-7 1 6 6zM26 4l-7 1 6 6z" fill="#fff4d8"/>'],
+  rapid:['#5a1220','#ff6a3a','<path d="M8 10l10 10-10 10M20 10l10 10-10 10" fill="none" stroke="#ffe0c8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>'],
+  auto:['#283447','#7aa7d6','<path d="M6 34L32 8" stroke="#fff" stroke-width="3"/><path d="M34 6l-11 2 9 9z" fill="#fff"/><path d="M6 34l2-7 5 5z" fill="#cfe0f5"/>'],
+};
+const S=[ // the hunter's spells, in priority order
+  {k:'mark',name:"Hunter's Mark",setup:true,cd:0,dmg:0},
+  {k:'sting',name:'Serpent Sting',dot:15,cd:0,dmg:0},
+  {k:'arcane',name:'Arcane Shot',cd:6,dmg:62},
+  {k:'multi',name:'Multi-Shot',cd:10,dmg:74},
+  {k:'rapid',name:'Rapid Fire',cd:60,big:true,dmg:0},
+  {k:'auto',name:'Auto Shot',auto:true,dmg:38},
+];
+const byK=Object.fromEntries(S.map(s=>[s.k,s]));
+const svg=k=>{const g=G[k];return `<svg viewBox="0 0 40 40"><defs><linearGradient id="g${k}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${g[1]}"/><stop offset="1" stop-color="${g[0]}"/></linearGradient></defs><rect width="40" height="40" fill="url(#g${k})"/>${g[2]}</svg>`};
+const $=id=>document.getElementById(id);
+const GCD=1.5,SWING=2.6,AVG=44,MOBHP=950;
+let st,auto=false,last=performance.now(),aiAt=0;
+function fresh(){
+  st={t:0,gcd:0,cd:{},dot:0,marked:false,skip:{},autoNext:null,hp:MOBHP,dmg:0,start:null,dead:false,rapid:0,after:null,respawn:null,dotTick:0};
+  $('mob').classList.remove('dead'); $('hp').style.width='100%';
+}
+fresh();
+const ready=s=>st.t>=st.gcd&&st.t>=(st.cd[s.k]||0);
+const left=s=>Math.max(0,st.gcd-st.t,(st.cd[s.k]||0)-st.t);
+function allowed(s){
+  if(s.auto||s.big)return false;
+  if(s.setup)return !st.marked&&!st.skip[s.k];
+  if(s.dot)return st.dot<=st.t;
+  return true;
+}
+// The same decision ForeCast makes: red/yellow cue plus the green spell that turns red next.
+function decide(){
+  if(st.dead)return {cue:null,state:'IDLE',label:'TARGET DOWN',up:null};
+  const autoIn=st.autoNext==null?null:st.autoNext-st.t;
+  let red=null;
+  for(const s of S){ if(allowed(s)&&ready(s)){red=s;break;} }
+  // green: soonest other allowed spell; while waiting on a dot, the time until it falls off
+  let up=null,upIn=1e9;
+  for(const s of S){
+    if(s.auto||s.big||s===red)continue;
+    let tl;
+    if(s.setup){ if(!allowed(s))continue; tl=left(s);}
+    else if(s.dot){ tl=Math.max(left(s),st.dot-st.t);}
+    else tl=left(s);
+    if(tl<upIn-.05){up=s;upIn=tl;}
+  }
+  if(red&&autoIn!=null&&autoIn<.45&&!red.setup)
+    return {cue:byK.auto,state:'WAIT',label:'LET AUTO SHOT LAND — THEN '+red.name.toUpperCase(),up:red,upIn:0};
+  if(red)return {cue:red,state:'RED',label:(red.setup?'MARK TARGET':'CAST '+red.name.toUpperCase()),up,upIn};
+  if(st.autoNext==null)return {cue:byK.auto,state:'RED',label:'START AUTO SHOT',up,upIn};
+  if(up&&upIn<30)return {cue:up,state:'GREEN',label:`GET READY: ${up.name.toUpperCase()} ${upIn.toFixed(1)}s`,up,upIn};
+  return {cue:byK.auto,state:'WAIT',label:'AUTO SHOT — LET IT FIRE',up:null};
+}
+function toast(msg){const t=$('toast');t.textContent=msg;t.style.opacity=1;clearTimeout(toast.h);toast.h=setTimeout(()=>t.style.opacity=0,2200);}
+function hit(n,x){
+  if(st.dead||n<=0)return;
+  st.hp-=n; st.dmg+=n;
+  const d=document.createElement('div');d.className='dmg';d.textContent=n;
+  d.style.right=(40+Math.random()*120)+'px';d.style.top=(60+Math.random()*20)+'px';$('fc').appendChild(d);setTimeout(()=>d.remove(),1000);
+  $('hp').style.width=Math.max(0,st.hp/MOBHP*100)+'%';
+  if(st.hp<=0){st.dead=true;$('mob').classList.add('dead');st.after=0;st.final=st.dmg/Math.max(1,st.t-st.start);st.respawn=st.t+6;st.autoNext=null;}
+}
+function cast(k){
+  const s=byK[k]; if(!s||st.dead)return;
+  if(st.start==null)st.start=st.t;
+  if(s.auto){ if(st.autoNext==null){st.autoNext=st.t+.3;} return; }
+  if(!ready(s)){toast(s.name+' is not ready yet');return;}
+  const d=decide();
+  // You passed over a set-up step: it's skipped for this target, the rotation goes on from here.
+  if(d.state==='RED'&&d.cue&&d.cue.setup&&d.cue!==s){st.skip[d.cue.k]=true;toast(d.cue.name+' skipped: you went with '+s.name);}
+  st.gcd=st.t+GCD; st.cd[k]=st.t+s.cd;
+  if(s.setup)st.marked=true;
+  if(s.dot){st.dot=st.t+s.dot;st.dotTick=st.t+3;}
+  if(s.big){st.rapid=st.t+15;toast('Rapid Fire: faster Auto Shots for 15 s');}
+  if(st.autoNext==null)st.autoNext=st.t+.4;
+  hit(s.dmg);
+}
+// Layout: ring icons around the character, HUD row, action bar.
+const ring=['mark','sting','arcane','multi','rapid','auto'];
+const pos=[[-150,-60],[-168,0],[-150,60],[150,-60],[168,0],[150,60]];
+const els={halo:{},hud:{},bar:{}};
+ring.forEach((k,i)=>{
+  const e=document.createElement('div');e.className='ico';e.innerHTML=svg(k)+'<div class="cd"></div><div class="t"></div>';
+  e.style.left=(pos[i][0]-20)+'px';e.style.top=(pos[i][1]-20)+'px';e.onclick=()=>cast(k);e.title=byK[k].name;
+  $('haloIcons').appendChild(e);els.halo[k]=e;
+  const h=document.createElement('div');h.className='ico';h.innerHTML=svg(k)+'<div class="cd"></div><div class="t"></div>';h.onclick=()=>cast(k);h.title=byK[k].name;
+  $('hudRow').appendChild(h);els.hud[k]=h;
+  const b=document.createElement('div');b.className='slot';b.innerHTML=`<div class="glow"></div><div class="ico">${svg(k)}<div class="cd"></div><div class="t"></div></div><span class="k">${i+1}</span>`;
+  b.onclick=()=>cast(k);b.title=byK[k].name;$('bar').appendChild(b);els.bar[k]=b;
+});
+document.addEventListener('keydown',e=>{const n=+e.key;if(n>=1&&n<=6&&document.activeElement.tagName!=='INPUT'){cast(ring[n-1]);}});
+// Halo arcs and DPS gauge (SVG).
+const NS='http://www.w3.org/2000/svg';
+const halo=$('halo');
+function arc(cx,cy,rx,ry,a0,a1){const p=a=>[cx+Math.cos(a*Math.PI/180)*rx,cy-Math.sin(a*Math.PI/180)*ry];const[x0,y0]=p(a0),[x1,y1]=p(a1);return `M${x0} ${y0} A${rx} ${ry} 0 0 ${a0>a1?1:0} ${x1} ${y1}`;}
+function path(d,stroke,w,op){const e=document.createElementNS(NS,'path');e.setAttribute('d',d);e.setAttribute('fill','none');e.setAttribute('stroke',stroke);e.setAttribute('stroke-width',w);e.setAttribute('stroke-linecap','round');e.setAttribute('opacity',op);halo.appendChild(e);return e;}
+const RX=118,RY=128;
+const track=[path(arc(0,0,RX,RY,180+70,180-70),'#8a80c0',3,.25),path(arc(0,0,RX,RY,-70,70),'#8a80c0',3,.25)];
+const litGlow=[path(arc(0,0,RX,RY,180+70,180-70),'#fff',10,0),path(arc(0,0,RX,RY,-70,70),'#fff',10,0)];
+const lit=[path(arc(0,0,RX,RY,180+70,180-70),'#fff',3.5,0),path(arc(0,0,RX,RY,-70,70),'#fff',3.5,0)];
+const LEN=lit[0].getTotalLength();
+const GR=[RX+60,RY+44],GS=34;
+const gTrack=path(arc(0,0,GR[0],GR[1],90+GS,90-GS),'#fff',2.5,.18);
+const gLitGlow=path(arc(0,0,GR[0],GR[1],90+GS,90-GS),'#5a9cff',9,0);
+const gLit=path(arc(0,0,GR[0],GR[1],90+GS,90-GS),'#5a9cff',3.5,0);
+const GLEN=gLit.getTotalLength();
+const tick=document.createElementNS(NS,'line');tick.setAttribute('x1',0);tick.setAttribute('x2',0);tick.setAttribute('y1',-GR[1]-8);tick.setAttribute('y2',-GR[1]+8);tick.setAttribute('stroke','#fff');tick.setAttribute('stroke-width',2);halo.appendChild(tick);
+const gLbl=document.createElementNS(NS,'text');gLbl.setAttribute('x',0);gLbl.setAttribute('y',-GR[1]-14);gLbl.setAttribute('text-anchor','middle');gLbl.setAttribute('font-size','13');gLbl.setAttribute('font-weight','700');gLbl.setAttribute('fill','#ccc');gLbl.setAttribute('font-family','Space Grotesk');halo.appendChild(gLbl);
+const COL={RED:'#ff3b2a',WAIT:'#ffc83a',GREEN:'#4fe07f',IDLE:'#8a80c0'};
+function band(r){return r<.6?'#f23333':r<.95?'#ff801f':r<=1.05?'#ffd633':r<1.25?'#33e673':'#b366ff';}
+let greenFrom=null;
+function draw(d){
+  const side=k=>ring.indexOf(k)<3?0:1;
+  let frac=d.state==='RED'||d.state==='WAIT'?1:.2;
+  if(d.state==='GREEN'){ if(!greenFrom||d.upIn>greenFrom.v||greenFrom.k!==d.cue.k)greenFrom={k:d.cue.k,v:Math.max(d.upIn,.1)}; frac=1-d.upIn/greenFrom.v;} else greenFrom=null;
+  const pulse=d.state==='RED'?.65+.35*Math.sin(st.t*9):1;
+  for(let i=0;i<2;i++){
+    const on=d.cue&&side(d.cue.k)===i&&!st.dead;
+    for(const p of [lit[i],litGlow[i]]){p.setAttribute('stroke',COL[d.state]);p.style.strokeDasharray=LEN;p.style.strokeDashoffset=LEN*(1-(on?frac:0));}
+    lit[i].setAttribute('opacity',on?pulse:0);litGlow[i].setAttribute('opacity',on?.35*pulse:0);
+  }
+  const c=$('cue');c.textContent=d.label;c.style.color=COL[d.state];
+  const lb=$('hudLbl');lb.textContent=d.label;lb.style.color=COL[d.state];
+  const inFight=st.start!=null&&!st.dead;
+  for(const s of S){
+    const k=s.k,isCue=d.cue===s&&!st.dead,isUp=d.up===s&&!isCue&&!st.dead;
+    const gold=s.big&&ready(s)&&inFight;
+    const cls=isCue?(d.state==='RED'?'red':d.state==='WAIT'?'wait':'up'):isUp?'up':gold?'gold':(inFight&&(allowed(s)||s.auto||s.dot||!s.setup))?'rot':'faded';
+    for(const e of [els.halo[k],els.hud[k]]){
+      e.className='ico '+cls;
+      const l=s.auto?0:left(s),full=s.big?s.cd:(s.cd||GCD);
+      e.querySelector('.cd').style.transform=`scaleY(${l>0?Math.min(1,l/Math.max(full,GCD)):0})`;
+      e.querySelector('.t').textContent=l>1.5?Math.ceil(l):'';
+    }
+    if(!els.hud[k].classList.contains('faded'))els.hud[k].style.filter='';
+    const g=els.bar[k].querySelector('.glow');
+    const col=isCue?COL[d.state==='GREEN'?'GREEN':d.state]:isUp?COL.GREEN:gold?'#ffb020':null;
+    g.style.opacity=col?1:0; if(col)g.style.boxShadow=`0 0 0 3px ${col},0 0 16px ${col}`;
+    const bl=s.auto?0:left(s);els.bar[k].querySelector('.cd').style.transform=`scaleY(${bl>0?Math.min(1,bl/Math.max(s.cd||GCD,GCD)):0})`;
+    els.bar[k].querySelector('.t').textContent=bl>1.5?Math.ceil(bl):'';
+  }
+  // DPS gauge and window bar: the middle is your average fight.
+  const showG=$('gauge').checked;
+  let dps=null,a=1;
+  if(inFight&&st.t-st.start>.5)dps=st.dmg/(st.t-st.start);
+  if(st.after!=null){dps=st.final;a=st.after<4?1:Math.max(0,1-(st.after-4)/1.5);}
+  const vis=showG&&dps!=null&&a>0;
+  for(const e of [gTrack,tick,gLbl])e.style.opacity=vis?a:0;
+  if(vis){
+    const r=dps/AVG,col=band(r),f=Math.min(1,dps/(AVG*2));
+    for(const p of [gLit,gLitGlow]){p.setAttribute('stroke',col);p.style.strokeDasharray=GLEN;p.style.strokeDashoffset=GLEN*(1-f);}
+    gLit.setAttribute('opacity',a);gLitGlow.setAttribute('opacity',.3*a);
+    const pct=Math.round((r-1)*100);gLbl.textContent=pct===0?'AVG':(pct>0?'+':'')+pct+'%';gLbl.setAttribute('fill',col);
+  } else {gLit.setAttribute('opacity',0);gLitGlow.setAttribute('opacity',0);}
+  const hb=$('hudDps');
+  if(dps!=null){hb.style.width=Math.min(100,dps/(AVG*2)*100)+'%';hb.style.background=band(dps/AVG);} else hb.style.width='0';
+}
+function step(dt){
+  st.t+=dt;
+  if(!st.dead&&st.autoNext!=null&&st.t>=st.autoNext){hit(byK.auto.dmg);st.autoNext=st.t+(st.rapid>st.t?SWING/1.4:SWING);}
+  if(!st.dead&&st.dot>st.t&&st.t>=st.dotTick){hit(21);st.dotTick+=3;}
+  if(st.after!=null)st.after+=dt;
+  if(st.respawn!=null&&st.t>=st.respawn){const keep=st.t;fresh();st.t=keep;st.cd={};const n=['Kobold Tunneler','Defias Footpad','Murloc Raider','Riverpaw Gnoll'];$('mobName').textContent=n[Math.floor(Math.random()*n.length)];}
+  const d=decide();
+  // Self-play: press the red spell after a human-ish reaction time.
+  if(auto&&!st.dead&&d.state==='RED'){ if(!aiAt)aiAt=st.t+.35+Math.random()*.3; if(st.t>=aiAt){cast(d.cue.k);aiAt=0;} } else aiAt=0;
+  draw(d);
+}
+function loop(now){const dt=Math.min(.1,(now-last)/1000);last=now;step(dt);requestAnimationFrame(loop);}
+requestAnimationFrame(loop);
+$('auto').onclick=()=>{auto=!auto;$('auto').textContent=auto?'Stop auto-play':'Let it play itself';};
+$('reset').onclick=()=>{const keep=st.t;fresh();st.t=keep;};
+})();
+</script>
+</body>
+</html>

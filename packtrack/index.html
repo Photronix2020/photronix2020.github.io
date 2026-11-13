@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PackTrack · Photronix Addons</title>
+<meta name="description" content="PackTrack keeps your WoW: Forever party together: arrows to every party member and everyone's quest progress side by side. Try the demo.">
+<link rel="icon" href="../img/packtrack-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/site.css">
+<style>
+#pt{height:560px;background:#1d2a17;cursor:crosshair}
+#map{position:absolute;inset:0;width:100%;height:100%}
+.party{position:absolute;left:12px;top:12px;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.pm{display:flex;align-items:center;gap:8px;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:5px 8px 5px 5px;width:212px}
+.pm .por{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:700 .8rem var(--display);color:#111}
+.pm .nm{font:600 .85rem var(--body)}
+.pm .sub{font-size:.72rem;color:#c9c4e0}
+.pm .arw{margin-left:auto;width:30px;height:30px;transition:transform .15s}
+.trk{position:absolute;right:12px;top:12px;width:300px;background:rgba(8,8,18,.82);border:1px solid #4a4270;border-radius:10px;font-size:.78rem;pointer-events:auto;cursor:default}
+.trk .hd{display:flex;gap:4px;align-items:center;padding:6px 8px;border-bottom:1px solid #3a3360}
+.trk .hd b{font:700 .85rem var(--display);margin-right:auto}
+.trk .hd span{padding:2px 6px;border:1px solid #4a4270;border-radius:5px;font-size:.68rem;color:#c9c4e0}
+.trk table{width:100%;border-collapse:collapse}
+.trk td,.trk th{padding:3px 6px;border-bottom:1px solid rgba(255,255,255,.06);text-align:center;white-space:nowrap}
+.trk th{font-size:.7rem;font-weight:700}
+.trk td:first-child,.trk th:first-child{text-align:left;white-space:normal}
+.trk tr.q td{color:#ffd100;font-weight:600;padding-top:6px;text-align:left}
+.trk tr.q.focus td{background:rgba(255,209,0,.08)}
+.trk .done{color:#4fe07f;font-weight:700}
+.trk .xp{padding:6px 8px;display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.trk .xp div{height:6px;border-radius:3px;background:#262040;position:relative;overflow:hidden}
+.trk .xp i{position:absolute;left:0;top:0;bottom:0;background:#9a5ae6}
+.chat{position:absolute;left:12px;bottom:12px;max-width:46%;font-size:.8rem;line-height:1.45;text-shadow:0 1px 2px #000;pointer-events:none}
+.chat div{color:#aad0ff;animation:fadein .3s}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}}
+.nav-arrow{position:absolute;left:50%;top:22px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;pointer-events:none;font:600 .78rem var(--display);text-shadow:0 1px 3px #000}
+.nav-arrow svg{width:46px;height:46px;transition:transform .15s}
+@media (max-width:760px){#pt{height:760px} .trk{left:12px;right:12px;width:auto;top:auto;bottom:12px} .chat{bottom:270px;max-width:92%} .party .pm{width:180px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="../"><div class="orb"></div><span>Photronix Addons</span></a>
+  <nav class="nav">
+    <a href="../forecast/"><img src="../img/forecast-icon.png" alt="">ForeCast</a>
+    <a href="../gank/"><img src="../img/gank-icon.png" alt="">Gank You Very Much</a>
+    <a class="on" href="./"><img src="../img/packtrack-icon.png" alt="">PackTrack</a>
+  </nav>
+</div></header>
+<main class="wrap">
+  <div class="page-head">
+    <img src="../img/packtrack-icon.png" alt="PackTrack">
+    <div class="txt">
+      <div class="eyebrow">Party tracker · v0.8.6 beta</div>
+      <h1>PackTrack</h1>
+      <p class="muted" style="max-width:640px">Keep your pack together and your quests in sync. Arrows beside every party portrait point the way, colored by distance, and one compact grid shows everyone's quest progress side by side.</p>
+      <div class="btns"><a class="btn cf" href="https://www.curseforge.com/wow/addons/packtrack">Download on CurseForge</a><a class="btn" href="https://photronix2020.github.io/PackTrack-Wiki/">Read the wiki</a><a class="btn" href="#demo">Try the demo</a></div>
+    </div>
+  </div>
+
+  <section id="demo" style="padding-top:24px">
+    <div class="eyebrow">Live demo</div>
+    <h2>Lead your party through the jungle</h2>
+    <p class="muted">Click the map to walk. Your party wanders off and quests on its own; the arrows by their portraits follow them. Kill raptors, set a rally point and watch the grid fill in.</p>
+    <div id="pt" class="stage joined">
+      <canvas id="map"></canvas>
+      <div class="nav-arrow" id="navA"><svg viewBox="0 0 40 40"><path d="M20 3l11 30-11-7-11 7z" fill="#ffd100" stroke="#000" stroke-width="1.5"/></svg><span id="navT"></span></div>
+      <div class="party" id="party"></div>
+      <div class="trk" id="trk"></div>
+      <div class="chat" id="chat"></div>
+    </div>
+    <div class="controls">
+      <button class="btn small" id="kill">Kill a raptor</button>
+      <button class="btn small" id="rally">Rally here</button>
+      <button class="btn small" id="share">Share my quest</button>
+      <span class="hint">Green: near · yellow: midway · red: far (demo range 300 yd).</span>
+    </div>
+  </section>
+
+  <section style="padding-top:10px">
+    <div class="eyebrow">What it does</div>
+    <h2>Nobody gets lost, nobody gets left behind</h2>
+    <div class="grid3" style="margin-top:20px">
+      <div class="tile"><h3>Party arrows</h3><p>Beside each portrait: green near, yellow midway, red far, with distance, area and what they're doing (bank, trainer, mailbox, AFK...).</p></div>
+      <div class="tile"><h3>Shared quest grid</h3><p>One line per objective, a column per player in class colors. Done, not in their log, offline: all clearly marked, never guessed.</p></div>
+      <div class="tile"><h3>Navigation arrow</h3><p>Points to your quest, a rally point, the party leader, or your corpse while you're a ghost.</p></div>
+      <div class="tile"><h3>Party quests</h3><p>See quests your party has that you don't and ask for a share with one click. Follow the leader's quest focus.</p></div>
+      <div class="tile"><h3>Announcements</h3><p>Optional party chat lines like "Raptors 2/8" that everyone sees, even without PackTrack.</p></div>
+      <div class="tile"><h3>Zone and Near</h3><p>Track your zone's quests in one click, or sort nearest first with the distance to each.</p></div>
+    </div>
+    <div class="grid3" style="margin-top:24px">
+      <figure class="tile" style="margin:0"><img src="../img/packtrack-tracker.jpg" alt="The quest grid in game" loading="lazy" style="border-radius:10px"><p style="margin-top:10px">The quest grid in game.</p></figure>
+    </div>
+    <p class="note" style="margin-top:24px">Every party member whose quest progress you want to see needs PackTrack too; the arrows only need your copy. Questions and bugs: <a href="https://www.curseforge.com/wow/addons/packtrack/comments">CurseForge comments</a>.</p>
+  </section>
+</main>
+<footer><div class="wrap"><div><a href="../">Photronix Addons</a> · PackTrack</div><div>World of Warcraft is a trademark of Blizzard Entertainment. Fan-made, not affiliated with Blizzard.</div></div></footer>
+
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const stage=$('pt'),cv=$('map'),ctx=cv.getContext('2d');
+const YPX=.9; // yards per pixel... 1 px = 0.9 yd... map spans the stage
+const FAR=300;
+const P=[
+  {name:'You',cls:'Hunter',col:'#aad372',x:0,y:0,tx:0,ty:0,me:true,act:''},
+  {name:'Tankyboi',cls:'Warrior',col:'#c69b6d',x:-120,y:-60,act:'',xp:62},
+  {name:'Healzor',cls:'Priest',col:'#ffffff',x:90,y:80,act:'',xp:35},
+  {name:'Stabbs',cls:'Rogue',col:'#fff468',x:260,y:-150,act:'',xp:81},
+];
+P[0].xp=48;
+const PLACES=[{x:-320,y:150,n:'at the mailbox'},{x:330,y:200,n:'at the flight master'},{x:-260,y:-220,n:'at the trainer'}];
+let rally=null;
+const Q=[
+  {t:'Raptor Captured',o:[{n:'Raptors slain',max:8,v:[2,5,3,8]}]},
+  {t:'Bloodscalp Insignia',o:[{n:'Insignia',max:5,v:[1,0,2,null]}]},
+  {t:'Supply Run',o:[{n:'Supply crates',max:3,v:[1,3,3,2]}]},
+];
+// Party frames with arrows.
+P.slice(1).forEach(p=>{
+  const d=document.createElement('div');d.className='pm';
+  d.innerHTML=`<div class="por" style="background:${p.col}">${p.name[0]}</div><div><div class="nm" style="color:${p.col}">${p.name}</div><div class="sub"></div></div><svg class="arw" viewBox="0 0 40 40"><path d="M20 3l11 30-11-7-11 7z" stroke="#000" stroke-width="1.5"/></svg>`;
+  $('party').appendChild(d);p.el=d;
+});
+function chat(t){const d=document.createElement('div');d.textContent=t;$('chat').appendChild(d);while($('chat').children.length>5)$('chat').firstChild.remove();}
+function size(){const r=stage.getBoundingClientRect();cv.width=r.width*devicePixelRatio;cv.height=r.height*devicePixelRatio;}
+size();addEventListener('resize',size);
+// The camera follows you; the world is in yards.
+function toScreen(x,y){const w=cv.width/devicePixelRatio,h=cv.height/devicePixelRatio;return [w/2+(x-P[0].x)/YPX,h/2+(y-P[0].y)/YPX];}
+stage.addEventListener('click',e=>{
+  if(e.target.closest('.trk'))return;
+  const r=stage.getBoundingClientRect();const w=r.width,h=r.height;
+  P[0].tx=P[0].x+(e.clientX-r.left-w/2)*YPX;P[0].ty=P[0].y+(e.clientY-r.top-h/2)*YPX;
+});
+const trees=[];for(let i=0;i<160;i++)trees.push([Math.random()*1600-800,Math.random()*1200-600,8+Math.random()*14]);
+function draw(){
+  const w=cv.width/devicePixelRatio,h=cv.height/devicePixelRatio;
+  ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  ctx.fillStyle='#22331a';ctx.fillRect(0,0,w,h);
+  // paths and trees
+  ctx.strokeStyle='#5a4a2a';ctx.lineWidth=18;ctx.lineCap='round';ctx.beginPath();
+  let [a,b]=toScreen(-800,100);ctx.moveTo(a,b);[a,b]=toScreen(-200,40);ctx.lineTo(a,b);[a,b]=toScreen(200,180);ctx.lineTo(a,b);[a,b]=toScreen(800,120);ctx.lineTo(a,b);ctx.stroke();
+  for(const t of trees){const[sx,sy]=toScreen(t[0],t[1]);if(sx<-30||sy<-30||sx>w+30||sy>h+30)continue;ctx.fillStyle='#16240f';ctx.beginPath();ctx.arc(sx+3,sy+4,t[2],0,7);ctx.fill();ctx.fillStyle='#2f5a22';ctx.beginPath();ctx.arc(sx,sy,t[2],0,7);ctx.fill();}
+  for(const pl of PLACES){const[sx,sy]=toScreen(pl.x,pl.y);ctx.fillStyle='#8a7350';ctx.fillRect(sx-14,sy-10,28,20);ctx.fillStyle='#ddd';ctx.font='11px Inter';ctx.textAlign='center';ctx.fillText(pl.n.replace('at the ',''),sx,sy+24);}
+  if(rally){const[sx,sy]=toScreen(rally.x,rally.y);ctx.strokeStyle='#ffd100';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(sx,sy-26);ctx.stroke();ctx.fillStyle='#ffd100';ctx.beginPath();ctx.moveTo(sx,sy-26);ctx.lineTo(sx+16,sy-20);ctx.lineTo(sx,sy-14);ctx.fill();}
+  for(const p of P){const[sx,sy]=toScreen(p.x,p.y);ctx.fillStyle='rgba(0,0,0,.4)';ctx.beginPath();ctx.ellipse(sx,sy+8,10,4,0,0,7);ctx.fill();ctx.fillStyle=p.col;ctx.beginPath();ctx.arc(sx,sy,9,0,7);ctx.fill();ctx.strokeStyle='#000';ctx.lineWidth=2;ctx.stroke();ctx.fillStyle='#fff';ctx.font='600 11px Inter';ctx.textAlign='center';ctx.fillText(p.name,sx,sy-14);}
+}
+function colorFor(d){return d<100?'#4fe07f':d<FAR?'#ffd100':'#ff4a3a';}
+function updateArrows(){
+  for(const p of P.slice(1)){
+    const dx=p.x-P[0].x,dy=p.y-P[0].y,d=Math.hypot(dx,dy),ang=Math.atan2(dx,-dy)*180/Math.PI;
+    const svg=p.el.querySelector('.arw');svg.style.transform=`rotate(${ang}deg)`;svg.querySelector('path').setAttribute('fill',colorFor(d));
+    p.el.querySelector('.sub').textContent=`${Math.round(d)} yd${p.act?' · '+p.act:''}`;
+  }
+  // Navigation arrow: rally point, else the focused quest area.
+  const tgt=rally||{x:180,y:-260,n:'Raptor Captured'};
+  const dx=tgt.x-P[0].x,dy=tgt.y-P[0].y,d=Math.hypot(dx,dy);
+  $('navA').querySelector('svg').style.transform=`rotate(${Math.atan2(dx,-dy)*180/Math.PI}deg)`;
+  $('navT').textContent=(rally?'Rally point':'Raptor Captured')+' · '+Math.round(d)+' yd';
+}
+function tracker(){
+  let h='<div class="hd"><b>PackTrack</b><span>Near</span><span>Zone</span><span>Quests</span></div><table><tr><th></th>'+P.map(p=>`<th style="color:${p.col}">${p.name}</th>`).join('')+'</tr>';
+  Q.forEach((q,qi)=>{
+    h+=`<tr class="q${qi===0?' focus':''}"><td colspan="${P.length+1}">${q.t}</td></tr>`;
+    for(const o of q.o){
+      h+=`<tr><td>${o.n}</td>`+o.v.map(v=>v==null?'<td style="color:#888">-</td>':v>=o.max?'<td class="done">Done</td>':`<td>${v}/${o.max}</td>`).join('')+'</tr>';
+    }
+  });
+  h+='</table><div class="xp">'+P.map(p=>`<div title="${p.name}"><i style="width:${p.xp}%;background:${p.col}"></i></div>`).join('')+'</div>';
+  $('trk').innerHTML=h;
+}
+function progress(qi,pi,n){const o=Q[qi].o[0];if(o.v[pi]==null||o.v[pi]>=o.max)return false;o.v[pi]=Math.min(o.max,o.v[pi]+n);return true;}
+$('kill').onclick=e=>{e.stopPropagation();if(progress(0,0,1)){const v=Q[0].o[0].v[0];chat(`[Party] You: Raptors ${v}/8${v>=8?' (done)':''}`);P[0].xp=Math.min(100,P[0].xp+4);tracker();}else chat('You already have all 8 raptors.');};
+$('rally').onclick=e=>{e.stopPropagation();rally={x:P[0].x,y:P[0].y};chat('[Party] You: Rally point set here. Meet up!');for(const p of P.slice(1)){p.goal={x:rally.x+(Math.random()*60-30),y:rally.y+(Math.random()*60-30)};p.act='heading to the rally';}};
+$('share').onclick=e=>{e.stopPropagation();if(Q[1].o[0].v[3]==null){Q[1].o[0].v[3]=0;chat('Stabbs accepted Bloodscalp Insignia.');tracker();}else chat('Everyone already has Bloodscalp Insignia.');};
+let last=performance.now(),think=0;
+function step(now){
+  const dt=Math.min(.1,(now-last)/1000);last=now;
+  const me=P[0],d=Math.hypot(me.tx-me.x,me.ty-me.y);
+  if(d>2){const s=Math.min(d,90*dt);me.x+=(me.tx-me.x)/d*s;me.y+=(me.ty-me.y)/d*s;}
+  think-=dt;
+  if(think<=0){
+    think=2.5;
+    for(const [i,p] of P.entries()){
+      if(i===0)continue;
+      if(!p.goal||Math.random()<.25){
+        if(rally&&p.act==='heading to the rally')continue;
+        if(Math.random()<.3){const pl=PLACES[Math.floor(Math.random()*PLACES.length)];p.goal={x:pl.x,y:pl.y};p.act='heading out';p.place=pl;}
+        else{p.goal={x:me.x+Math.random()*360-180,y:me.y+Math.random()*300-150};p.act=Math.random()<.3?'fighting':'';p.place=null;}
+      }
+      if(p.act==='fighting'&&progress(0,i,1)){const v=Q[0].o[0].v[i];if(Math.random()<.5)chat(`[Party] ${p.name}: Raptors ${v}/8${v>=8?' (done)':''}`);p.xp=Math.min(100,p.xp+3);}
+      if(Math.random()<.12)progress(2,i,1);
+    }
+    tracker();
+  }
+  for(const [i,p] of P.entries()){
+    if(i===0||!p.goal)continue;
+    const dd=Math.hypot(p.goal.x-p.x,p.goal.y-p.y);
+    if(dd>3){const s=Math.min(dd,70*dt);p.x+=(p.goal.x-p.x)/dd*s;p.y+=(p.goal.y-p.y)/dd*s;}
+    else if(p.place){p.act=p.place.n;}
+    else if(p.act==='heading to the rally'){p.act='at the rally point';}
+  }
+  draw();updateArrows();requestAnimationFrame(step);
+}
+tracker();chat('[Party] Tankyboi: pulling the raptors by the river');requestAnimationFrame(step);
+})();
+</script>
+</body>
+</html>

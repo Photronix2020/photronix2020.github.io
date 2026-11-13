@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gank You Very Much · Photronix Addons</title>
+<meta name="description" content="Gank You Very Much: a WANTED poster of whoever killed you in WoW: Forever, KILLED stamped on the ones you get back, and WATCH OUT! warnings. Try the demo.">
+<link rel="icon" href="../img/gank-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=Rye&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/site.css">
+<style>
+#gk{height:690px;background:radial-gradient(600px 380px at 50% 45%,#3b4a2c,#1b2414 60%,#0d120a)}
+.banner{position:absolute;left:0;right:0;top:26px;text-align:center;pointer-events:none;opacity:0;transition:opacity .4s}
+.banner .big{font:400 3rem/1 'Rye',serif;color:#ff2a1a;text-shadow:0 0 2px #000,0 3px 0 #400,0 0 18px rgba(255,40,20,.6)}
+.banner .line{font:600 1.05rem var(--body);margin-top:8px;text-shadow:0 2px 3px #000}
+.banner .extra{font-size:.92rem;margin-top:4px;text-shadow:0 2px 3px #000}
+.poster{position:absolute;left:50%;top:calc(50% + 62px);width:270px;height:500px;transform:translate(-50%,-50%) scale(.98);background:url(../img/poster.png) center/100% 100% no-repeat;color:#46220c;text-align:center;font-family:'IM Fell English',serif;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;filter:drop-shadow(0 18px 30px rgba(0,0,0,.6))}
+.poster.on{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+.poster .w{font:400 2.9rem/1 'Rye',serif;margin-top:40px;letter-spacing:.02em}
+.poster .sub{font-size:.8rem;margin-top:4px;letter-spacing:.06em}
+.poster .box{width:150px;height:150px;margin:10px auto 0;border:3px solid #46220c;background:#2a1d10;position:relative;overflow:hidden}
+.poster .box svg{width:100%;height:100%;filter:sepia(.9) saturate(.8)}
+.poster .nm{font:400 1.7rem/1.1 'Rye',serif;margin-top:10px}
+.poster .ds{font-size:.85rem}
+.poster .gd{font-size:.8rem;font-style:italic}
+.poster .cr{font-size:.86rem;margin:10px 14px 0;line-height:1.3}
+.poster .sn{font-size:.72rem;margin-top:6px;line-height:1.3}
+.poster .rh{font:400 1.1rem 'Rye',serif;margin-top:8px;color:#8c140a}
+.poster .rw{font-size:.8rem;margin:0 16px}
+.poster .stamp{position:absolute;left:50%;top:165px;width:300px;height:300px;transform:translate(-50%,-50%);background:url(../img/killed.png) center/contain no-repeat;display:none;pointer-events:none}
+.poster.killed .stamp{display:block}
+.poster .x{position:absolute;top:12px;right:14px;width:22px;height:22px;border-radius:50%;border:0;background:#7a1a10;color:#fff;font:700 13px var(--body);cursor:pointer}
+.gk-tabs{display:flex;gap:6px;flex-wrap:wrap;margin:18px 0 10px}
+.gk-tabs button{background:var(--panel2);border:1px solid var(--line2);color:var(--muted);padding:7px 12px;border-radius:9px;font:600 .88rem var(--body);cursor:pointer}
+.gk-tabs button.on{color:#fff;border-color:#c0392b;background:#3a1612}
+.tbl td.k{color:#ff7a5a;font-weight:600}
+.feed{position:absolute;left:14px;bottom:14px;max-width:calc(50% - 160px);font-size:.82rem;line-height:1.45;text-shadow:0 1px 2px #000;pointer-events:none}
+.feed div{animation:fadein .3s}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}}
+@media (max-width:640px){#gk{height:700px} .poster{top:calc(50% + 40px)} .banner .big{font-size:2.2rem} .poster{transform:translate(-50%,-50%) scale(.82)} .poster.on{transform:translate(-50%,-50%) scale(.86)} .feed{max-width:92%}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="../"><div class="orb"></div><span>Photronix Addons</span></a>
+  <nav class="nav">
+    <a href="../forecast/"><img src="../img/forecast-icon.png" alt="">ForeCast</a>
+    <a class="on" href="./"><img src="../img/gank-icon.png" alt="">Gank You Very Much</a>
+    <a href="../packtrack/"><img src="../img/packtrack-icon.png" alt="">PackTrack</a>
+  </nav>
+</div></header>
+<main class="wrap">
+  <div class="page-head">
+    <img src="../img/gank-icon.png" alt="Gank You Very Much">
+    <div class="txt">
+      <div class="eyebrow">PvP grudge keeper · v1.1.0</div>
+      <h1>Gank You Very Much</h1>
+      <p class="muted" style="max-width:640px">Somebody ganked you? They go on a WANTED poster the moment you die. Get them back and KILLED gets stamped across it in big red letters. When an enemy player shows up, it shouts WATCH OUT!</p>
+      <div class="btns"><a class="btn cf" href="https://www.curseforge.com/wow/addons/gankyouverymuch">Download on CurseForge</a><a class="btn" href="#demo">Try the demo</a></div>
+    </div>
+  </div>
+
+  <section id="demo" style="padding-top:24px">
+    <div class="eyebrow">Live demo</div>
+    <h2>Get ganked, get even</h2>
+    <p class="muted">Press the buttons in order, or in any order. Posters stay 5 seconds and fade; hover one to keep it, click X to close it. Click any name in the lists below for their poster.</p>
+    <div id="gk" class="stage joined">
+      <div class="banner" id="banner"><div class="big">WATCH OUT!</div><div class="line" id="bLine"></div><div class="extra" id="bExtra"></div></div>
+      <div class="poster" id="poster">
+        <button class="x" id="px" aria-label="Close">✕</button>
+        <div class="w">WANTED</div><div class="sub" id="pSub"></div>
+        <div class="box" id="pBox"></div>
+        <div class="nm" id="pName"></div><div class="ds" id="pDesc"></div><div class="gd" id="pGuild"></div>
+        <div class="cr" id="pCrime"></div><div class="sn" id="pSeen"></div>
+        <div class="rh" id="pRH"></div><div class="rw" id="pRW"></div>
+        <div class="stamp"></div>
+      </div>
+      <div class="feed" id="feed"></div>
+    </div>
+    <div class="controls">
+      <button class="btn small" id="bEnemy">An enemy shows up</button>
+      <button class="btn small" id="bGank">Get ganked</button>
+      <button class="btn small" id="bKill">Get them back</button>
+      <button class="btn small" id="bGuild">A guildmate gets ganked nearby</button>
+    </div>
+
+    <div class="gk-tabs" id="tabs">
+      <button data-m="wanted" class="on">They killed me</button><button data-m="kills">I killed them</button><button data-m="guild">Guild</button><button data-m="board">Leaderboard</button>
+    </div>
+    <div class="tblwrap"><table class="tbl" id="tbl"></table></div>
+    <p class="hint" id="sum" style="margin-top:10px"></p>
+  </section>
+
+  <section style="padding-top:10px">
+    <div class="eyebrow">What it does</div>
+    <h2>Every grudge, on paper</h2>
+    <div class="grid3" style="margin-top:20px">
+      <div class="tile"><h3>WANTED poster</h3><p>Portrait (3D while they're in sight, else their race), name, level, race, class, guild, how often they've killed you, where and when, and a well-earned reward.</p></div>
+      <div class="tile"><h3>KILLED stamp</h3><p>Kill an enemy player and their poster comes up stamped KILLED. Get someone who killed you: Revenge for 3 deaths!</p></div>
+      <div class="tile"><h3>WATCH OUT!</h3><p>A big red warning and a sound when an enemy player appears. Repeat killers, past victims and anyone targeting you get called out.</p></div>
+      <div class="tile"><h3>Two lists</h3><p>They killed me and I killed them: level, race and class, guild, kills, last place and time. Sortable, with a poster for every name.</p></div>
+      <div class="tile"><h3>Your guild</h3><p>Guildmates with the addon share ganks and kills, with a lifetime leaderboard. Every gank is announced in guild chat with the zone.</p></div>
+      <div class="tile"><h3>Try it without dying</h3><p>Simulate a gank, a kill or a guildmate's message from the settings, so you can see everything before your first real fight.</p></div>
+    </div>
+    <div class="grid3" style="margin-top:24px">
+      <figure class="tile" style="margin:0"><img src="../img/gank-main.jpg" alt="Most Wanted list in game" loading="lazy" style="border-radius:10px"><p style="margin-top:10px">The Most Wanted list in game.</p></figure>
+      <figure class="tile" style="margin:0"><img src="../img/gank-poster-shot.jpg" alt="A WANTED poster in game" loading="lazy" style="border-radius:10px;max-height:420px;margin:auto"><p style="margin-top:10px">A WANTED poster in game.</p></figure>
+    </div>
+    <p class="note" style="margin-top:24px">Who killed you comes from the game's death recap; if that's missing, the addon blames the enemy player who last had you targeted. Mobs don't get posters. Questions and bugs: <a href="https://www.curseforge.com/wow/addons/gankyouverymuch/comments">CurseForge comments</a>.</p>
+  </section>
+</main>
+<footer><div class="wrap"><div><a href="../">Photronix Addons</a> · Gank You Very Much</div><div>World of Warcraft is a trademark of Blizzard Entertainment. Fan-made, not affiliated with Blizzard.</div></div></footer>
+
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const CLASS={Rogue:'#fff468',Warrior:'#c69b6d',Mage:'#3fc7eb',Priest:'#ffffff',Hunter:'#aad372',Warlock:'#8788ee',Druid:'#ff7c0a',Paladin:'#f48cba',Shaman:'#0070dd'};
+const ENEMIES=[
+  {name:'Gankalot',level:60,race:'Undead',cls:'Rogue',guild:'Corpse Campers'},
+  {name:'Stompgrub',level:58,race:'Orc',cls:'Warrior',guild:'Bloodfang Raiders'},
+  {name:'Hexanna',level:57,race:'Troll',cls:'Shaman',guild:null},
+  {name:'Moonwhack',level:60,race:'Tauren',cls:'Druid',guild:'Corpse Campers'},
+];
+const ZONES=[['Stranglethorn Vale','Booty Bay'],['Redridge Mountains','Lakeshire'],['Hillsbrad Foothills','Southshore'],['Duskwood','Darkshire']];
+const REWARDS=['One (1) bowl of cold revenge','50 silver and a stern look','Bragging rights, lightly used','A heartfelt /spit','Free corpse run, no questions asked','A hug from the spirit healer','One stale Conjured Muffin','A strongly worded letter'];
+const PAID=['Their dignity, in small bills','One (1) corpse run, theirs','Sweet, sweet honor','The look on their face','A /dance on their grave','Justice, served lukewarm','The last word, finally'];
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const now=()=>Date.now();
+const ago=h=>now()-h*3600e3;
+// The lists, seeded with a little history.
+const killers={Gankalot:{...ENEMIES[0],kills:2,last:ago(30),zone:'Redridge Mountains'},Hexanna:{...ENEMIES[2],kills:1,last:ago(52),zone:'Duskwood'}};
+const victims={Stompgrub:{...ENEMIES[1],kills:1,last:ago(20),zone:'Hillsbrad Foothills'}};
+const guild=[
+  {t:ago(3),member:'Bandagebro',what:'D',...ENEMIES[0],zone:'Stranglethorn Vale'},
+  {t:ago(2.5),member:'Healzor',what:'K',...ENEMIES[0],zone:'Stranglethorn Vale'},
+  {t:ago(1),member:'Tankyboi',what:'D',...ENEMIES[3],zone:'Duskwood'},
+];
+const board=[{member:'Bandagebro',kills:41,deaths:17,top:'Gankalot (6)'},{member:'Healzor',kills:23,deaths:30,top:'Moonwhack (4)'},{member:'Tankyboi',kills:12,deaths:9,top:'Stompgrub (3)'}];
+let mode='wanted',sort={wanted:['last',-1],kills:['last',-1],guild:['t',-1],board:['kills',-1]};
+let lastEnemy=ENEMIES[0];
+function when(t){const d=new Date(t);return d.toLocaleDateString(undefined,{month:'short',day:'numeric'})+' '+d.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'});}
+function face(e){
+  const c=CLASS[e.cls]||'#ccc';
+  return `<svg viewBox="0 0 150 150"><rect width="150" height="150" fill="#3a2a18"/><circle cx="75" cy="58" r="30" fill="#c9b08a"/><path d="M45 50q30-40 60 0q-5-30-30-32q-25 2-30 32z" fill="#3b2a1a"/><rect x="58" y="58" width="12" height="5" fill="#2a1a0a"/><rect x="80" y="58" width="12" height="5" fill="#2a1a0a"/><path d="M62 74q13 8 26 0" stroke="#2a1a0a" stroke-width="3" fill="none"/><path d="M20 150q10-55 55-58q45 3 55 58z" fill="${c}" opacity=".85"/><path d="M60 92l15 22 15-22" fill="#2a1a0a" opacity=".5"/></svg>`;
+}
+// The poster: stays 5 s, fades over 3 s; hover keeps it, X closes it. From a list it stays up.
+const P=$('poster');let shownAt=0,fades=false;
+function poster(r,opts={}){
+  const killed=!!opts.killed, n=r.kills||1;
+  P.classList.toggle('killed',killed);
+  $('pSub').textContent=killed?'BOUNTY COLLECTED':'DEAD OR ALIVE (preferably dead)';
+  $('pBox').innerHTML=face(r);
+  $('pName').textContent=r.name;$('pDesc').textContent=`Level ${r.level} ${r.race} ${r.cls}`;
+  $('pGuild').textContent=r.guild?`<${r.guild}>`:'No guild, no shame';
+  if(killed){
+    const by=opts.member||'you';
+    let c=`Brought to justice by ${by}`+(n>1&&!opts.member?` ${n} times`:'');
+    const theirs=killers[r.name];
+    if(!opts.member&&theirs)c+=`\nRevenge for ${theirs.kills} ${theirs.kills==1?'death':'deaths'}!`;
+    $('pCrime').innerText=c;$('pSeen').innerText=`Taken down: ${r.zone}\n${when(r.last||r.t||now())}`;
+    $('pRH').textContent='REWARD PAID';$('pRW').textContent=pick(PAID);
+  } else {
+    const who=opts.member||'you';
+    $('pCrime').innerText=`For the crime of killing ${who}`+(n>1&&!opts.member?` ${n} times`:'')+(opts.spell?`\nwith ${opts.spell}`:'')+'.';
+    $('pSeen').innerText=`Last seen: ${r.zone}\n${when(r.last||r.t||now())}`;
+    $('pRH').textContent=opts.member?'GUILD BOUNTY':'REWARD';$('pRW').textContent=pick(REWARDS);
+  }
+  fades=!opts.quiet;shownAt=performance.now();P.style.opacity='';P.classList.add('on');
+}
+$('px').onclick=()=>{P.classList.remove('on');P.style.opacity='';};
+function tick(){
+  if(P.classList.contains('on')&&fades){
+    if(P.matches(':hover'))shownAt=performance.now();
+    const age=(performance.now()-shownAt)/1000;
+    if(age>=8){P.classList.remove('on');P.style.opacity='';}
+    else if(age>5)P.style.opacity=String(1-(age-5)/3);
+    else P.style.opacity='1';
+  }
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+function feed(html){const d=document.createElement('div');d.innerHTML=html;$('feed').appendChild(d);while($('feed').children.length>5)$('feed').firstChild.remove();}
+const colored=e=>`<span style="color:${CLASS[e.cls]}">${e.name}</span>`;
+let bannerT;
+function warn(e,extra){
+  $('bLine').innerHTML=`${colored(e)}  Level ${e.level} ${e.race} ${e.cls}${e.guild?'  &lt;'+e.guild+'&gt;':''}`;
+  $('bExtra').innerHTML=extra||'';
+  const b=$('banner');b.style.opacity=1;clearTimeout(bannerT);bannerT=setTimeout(()=>b.style.opacity=0,4200);
+}
+function warnExtra(e){
+  const p=[];const k=killers[e.name],v=victims[e.name];
+  if(k)p.push(`<span style="color:#ff5050">Killed you ${k.kills} ${k.kills==1?'time':'times'}. Revenge?</span>`);
+  if(v)p.push(`<span style="color:#50ff70">You killed them ${v.kills} ${v.kills==1?'time':'times'}.</span>`);
+  const g=guild.filter(x=>x.what==='D'&&x.name===e.name).length;
+  if(g)p.push(`<span style="color:#ff9a30">Ganked your guild ${g} ${g==1?'time':'times'}.</span>`);
+  return p;
+}
+$('bEnemy').onclick=()=>{lastEnemy=pick(ENEMIES);const p=warnExtra(lastEnemy);p.push('<span style="color:#ffd100">Has you targeted!</span>');warn(lastEnemy,p.join('  '));};
+$('bGank').onclick=()=>{
+  const e=lastEnemy,z=pick(ZONES);
+  const r=killers[e.name]||(killers[e.name]={...e,kills:0});
+  r.kills++;r.last=now();r.zone=z[0];
+  feed(`<span style="color:#d9a441">Gank You Very Much</span>: ${colored(e)} killed you${r.kills>1?' for the '+r.kills+(r.kills==2?'nd':r.kills==3?'rd':'th')+' time':''}. Added to your most wanted list.`);
+  feed(`<span style="color:#40ff40">[Guild] You: [Gank You Very Much] I was ganked by ${e.name} (Level ${e.level} ${e.race} ${e.cls}) in ${z[1]}, ${z[0]}. Watch your backs!</span>`);
+  guild.push({t:now(),member:'You',what:'D',...e,zone:z[0]});
+  poster(r,{spell:pick(['Ambush','Backstab','Mortal Strike','Lightning Bolt','Starfire'])});render();
+};
+$('bKill').onclick=()=>{
+  const e=lastEnemy,z=pick(ZONES);
+  const r=victims[e.name]||(victims[e.name]={...e,kills:0});
+  r.kills++;r.last=now();r.zone=z[0];
+  feed(`<span style="color:#40ff60">You killed ${e.name}</span>${r.kills>1?', '+r.kills+' times now':''}. Added to your kill list.`);
+  guild.push({t:now(),member:'You',what:'K',...e,zone:z[0]});
+  poster(r,{killed:true});render();
+};
+$('bGuild').onclick=()=>{
+  const e=pick(ENEMIES),m=pick(['Bandagebro','Healzor','Tankyboi']);
+  guild.push({t:now(),member:m,what:'D',...e,zone:'Stranglethorn Vale'});
+  feed(`<span style="color:#d9a441">Guild</span>: ${m} was ganked by ${colored(e)} in Booty Bay, Stranglethorn Vale.`);
+  const p=warnExtra(e);p.push(`<span style="color:#ffd100">Just ganked ${m} at Booty Bay!</span>`);warn(e,p.join('  '));lastEnemy=e;render();
+};
+// Lists
+const COLS={
+  wanted:[['name','Name'],['level','Lvl'],['rc','Race / class'],['guild','Guild'],['kills','Kills'],['zone','Last place'],['last','Last time']],
+  kills:[['name','Name'],['level','Lvl'],['rc','Race / class'],['guild','Guild'],['kills','Kills'],['zone','Last place'],['last','Last time']],
+  guild:[['t','When'],['member','Guildmate'],['what','What'],['name','Enemy'],['level','Lvl'],['rc','Race / class'],['zone','Where']],
+  board:[['rank','#'],['member','Guildmate'],['kills','Kills'],['deaths','Deaths'],['kd','K/D'],['top','Favorite target']],
+};
+function rows(){
+  if(mode==='wanted')return Object.values(killers);
+  if(mode==='kills')return Object.values(victims);
+  if(mode==='guild')return guild.slice();
+  const you={member:'You',kills:Object.values(victims).reduce((a,v)=>a+v.kills,0),deaths:Object.values(killers).reduce((a,v)=>a+v.kills,0),top:'',you:true};
+  const top=Object.values(victims).sort((a,b)=>b.kills-a.kills)[0];if(top)you.top=`${top.name} (${top.kills})`;
+  const l=board.concat([you]).sort((a,b)=>b.kills-a.kills);l.forEach((r,i)=>{r.rank=i+1;r.kd=r.deaths?r.kills/r.deaths:r.kills;});return l;
+}
+function val(r,k){return k==='rc'?(r.race+' '+r.cls):r[k];}
+function render(){
+  const cols=COLS[mode],[sk,sd]=sort[mode];
+  const list=rows().sort((a,b)=>{let x=val(a,sk),y=val(b,sk);if(typeof x==='string'){x=x.toLowerCase();y=(y||'').toLowerCase();}if(x===y)return 0;return (x>y?1:-1)*sd;});
+  let h='<thead><tr>'+cols.map(([k,t])=>`<th data-k="${k}">${t}${k===sk?(sd<0?' ▾':' ▴'):''}</th>`).join('')+'</tr></thead><tbody>';
+  list.forEach((r,i)=>{
+    h+=`<tr data-i="${i}" style="cursor:${mode==='board'?'default':'pointer'}">`+cols.map(([k])=>{
+      let v=val(r,k);
+      if(k==='last'||k==='t')v=when(v);
+      if(k==='name')return `<td style="color:${CLASS[r.cls]};font-weight:600">${v}</td>`;
+      if(k==='what')return `<td style="color:${r.what==='K'?'#50ff70':'#ff6040'}">${r.what==='K'?'killed':'ganked by'}</td>`;
+      if(k==='kd')v=v.toFixed(1);
+      if(k==='rank')return `<td style="color:${['#ffd100','#c0c0c0','#cd7f32'][v-1]||'inherit'};font-weight:700">${v}</td>`;
+      if(k==='member'&&r.you)return `<td style="color:#66ff80">You</td>`;
+      if(k==='guild')v=v||'';
+      return `<td>${v}</td>`;
+    }).join('')+'</tr>';
+  });
+  $('tbl').innerHTML=h+'</tbody>';
+  $('tbl').querySelectorAll('th').forEach(th=>th.onclick=()=>{const k=th.dataset.k;sort[mode]=[k,sort[mode][0]===k?-sort[mode][1]:(['kills','last','t','level','deaths','kd'].includes(k)?-1:1)];render();});
+  $('tbl').querySelectorAll('tbody tr').forEach(tr=>tr.onclick=()=>{
+    if(mode==='board')return;const r=list[+tr.dataset.i];
+    if(mode==='guild'){const n=guild.filter(g=>g.name===r.name&&g.what===r.what).length;poster({...r,kills:n},{quiet:true,killed:r.what==='K',member:r.member==='You'?null:r.member});}
+    else poster(r,{quiet:true,killed:mode==='kills'});
+  });
+  const tot=list.reduce((a,r)=>a+(r.kills||0),0);
+  $('sum').textContent=mode==='wanted'?`Killed by players ${tot} times, by ${list.length} different players.`:mode==='kills'?`You killed players ${tot} times, ${list.length} different players.`:mode==='guild'?'Ganks and kills from guildmates who use Gank You Very Much.':'Lifetime player kills of guildmates who use Gank You Very Much.';
+}
+$('tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{mode=b.dataset.m;$('tabs').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));render();});
+render();
+})();
+</script>
+</body>
+</html>
