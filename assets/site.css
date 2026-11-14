@@ -69,6 +69,14 @@ section{padding:72px 0}
 .card ul{margin:0;padding-left:18px;color:var(--muted);font-size:.93rem}
 .card .btns{margin-top:auto}
 
+/* Small addon cards */
+.minis{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+.mini{display:flex;gap:16px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+.mini img{width:64px;height:64px;border-radius:15px;border:1px solid var(--line2);flex:none;object-fit:cover}
+.mini h3{margin-bottom:.3em}
+.mini p{color:var(--muted);font-size:.93rem;margin:0 0 12px}
+@media (max-width:640px){.minis{grid-template-columns:1fr}}
+
 /* Feature grids */
 .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
 .tile{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
