@@ -43,6 +43,8 @@ p{margin:0 0 1em}
 .btn:hover{text-decoration:none;border-color:var(--violet);transform:translateY(-1px)}
 .btn.primary{background:linear-gradient(135deg,#7d45d6,#4a2a9a);border-color:#9a6af0}
 .btn.cf{background:linear-gradient(135deg,#f16436,#c2401b);border-color:#ff8a5c}
+.btn.wago{background:linear-gradient(135deg,#2a2a2e,#151517);border-color:#d8323c;color:#fff}
+.btn.wago:hover{border-color:#ff5560}
 .btn.small{padding:7px 12px;font-size:.85rem;border-radius:10px}
 .btn:disabled{opacity:.45;cursor:default;transform:none}
 .btns{display:flex;flex-wrap:wrap;gap:10px}
