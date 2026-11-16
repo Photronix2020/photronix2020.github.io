@@ -15,8 +15,8 @@
 .banner .big{font:400 3rem/1 'Rye',serif;color:#ff2a1a;text-shadow:0 0 2px #000,0 3px 0 #400,0 0 18px rgba(255,40,20,.6)}
 .banner .line{font:600 1.05rem var(--body);margin-top:8px;text-shadow:0 2px 3px #000}
 .banner .extra{font-size:.92rem;margin-top:4px;text-shadow:0 2px 3px #000}
-.poster{position:absolute;left:50%;top:calc(50% + 62px);width:270px;height:500px;transform:translate(-50%,-50%) scale(.98);background:url(../img/poster.png) center/100% 100% no-repeat;color:#46220c;text-align:center;font-family:'IM Fell English',serif;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;filter:drop-shadow(0 18px 30px rgba(0,0,0,.6))}
-.poster.on{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+.poster{position:absolute;left:50%;top:calc(50% + 62px);width:270px;height:500px;transform:translate(-50%,-50%) scale(.98);background:url(../img/poster.png) center/100% 100% no-repeat;color:#46220c;text-align:center;font-family:'IM Fell English',serif;opacity:0;pointer-events:none;visibility:hidden;transition:opacity .25s,transform .25s,visibility 0s .25s;filter:drop-shadow(0 18px 30px rgba(0,0,0,.6))}
+.poster.on{opacity:1;visibility:visible;transition:opacity .25s,transform .25s;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
 .poster .w{font:400 2.9rem/1 'Rye',serif;margin-top:40px;letter-spacing:.02em}
 .poster .sub{font-size:.8rem;margin-top:4px;letter-spacing:.06em}
 .poster .box{width:150px;height:150px;margin:10px auto 0;border:3px solid #46220c;background:#2a1d10;position:relative;overflow:hidden}
