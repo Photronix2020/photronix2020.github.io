@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Profession Flowchart · Photronix Addons</title>
+<meta name="description" content="Profession Flowchart: every crafting chain as a flowchart beside your profession window, with a button to craft each step and picks for the best skill-ups and gold. Try the demo.">
+<link rel="icon" href="../img/pflow-icon.png?v=1">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,500;0,700;0,800;1,500&family=Alegreya+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/site.css?v=4">
+<style>
+.pf{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:14px;align-items:start}
+.win{padding:0}
+.win .hd{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin-bottom:10px}
+.win .hd b{font:700 1.1rem var(--display);color:var(--gold)}
+.win .hd .sk{color:var(--muted);font-size:.92rem}
+.win .hd label{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--muted)}
+.win input[type=range]{width:120px;accent-color:var(--gold)}
+.list{border:1px solid var(--line);border-radius:4px;background:#15120e;padding:6px}
+.tabs{display:flex;gap:6px;align-items:center;margin-bottom:6px}
+.tabs .btn.on{border-color:var(--gold);background:#30291e;color:var(--gold)}
+.tabs .hint2{margin-left:auto;font-size:.85rem;color:var(--dim)}
+.row{display:flex;align-items:center;gap:10px;width:100%;padding:5px 6px;border:0;border-radius:3px;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.row:hover{background:#221d16}
+.row.sel{background:#2e2619}
+.row .ic{flex:none;width:22px;height:22px;border-radius:3px}
+.row .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:700}
+.row .sub{font-size:.88rem;white-space:nowrap}
+.empty{color:var(--dim);font-size:.9rem;padding:8px}
+.chart{position:relative;margin-top:10px;border:1px solid var(--line);border-radius:4px;background:#120f0b;overflow:auto;height:390px}
+.chart svg{position:absolute;left:0;top:0;pointer-events:none}
+.node{position:absolute;width:168px;height:62px;border:2px solid #9e8561;border-radius:3px;background:#1d1914;padding:0;text-align:left;color:inherit;font:inherit;line-height:1.2;cursor:default}
+.node.craft{cursor:pointer}
+.node.craft:hover{background:#262017}
+.node.next{outline:3px solid #8a6a2a;outline-offset:2px}
+.node .ic{position:absolute;left:6px;top:6px;width:30px;height:30px;border-radius:3px}
+.node .nm{position:absolute;left:43px;right:6px;top:5px;color:#ffd25a;font-weight:700;font-size:.86rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.node .ta{position:absolute;left:43px;right:4px;top:23px;font-size:.8rem;color:#ddd;white-space:nowrap}
+.node .ac{position:absolute;left:7px;bottom:4px;font-size:.8rem;font-weight:700;white-space:nowrap}
+.per{position:absolute;font-size:.75rem;color:#a09378;white-space:nowrap}
+.ft{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-top:10px}
+.ft .cnt{min-width:24px;text-align:center;font-weight:700}
+.ft .sum{flex:1 1 260px;font-size:.92rem;color:#ddd}
+.ft .go{margin-left:auto}
+.bags{background:#1a1611;border:1px solid var(--line2);border-radius:var(--radius);padding:12px}
+.bags h3{margin-bottom:8px}
+.bag{display:flex;align-items:center;gap:8px;padding:3px 0;font-size:.92rem}
+.bag .ic{width:20px;height:20px;border-radius:3px;flex:none}
+.bag .n{margin-left:auto;font-weight:700}
+.bags .btns{margin-top:10px;flex-direction:column}
+.bags .btns .btn{justify-content:center}
+.log{margin-top:10px;font-size:.88rem;color:var(--muted);min-height:3em}
+.c-orange{color:#ff8040}.c-yellow{color:#f0e040}.c-green{color:#4cc04c}.c-gray{color:#a0a0a0}
+.good{color:#7fd07f}.bad{color:#ff8a78}.dim{color:#a09a8c}
+@media (max-width:860px){.pf{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="../"><div class="orb"></div><span>Photronix Addons</span></a>
+  <nav class="nav">
+    <a href="../forecast/"><img src="../img/forecast-icon.png?v=5" alt="">ForeCast</a>
+    <a href="../gank/"><img src="../img/gank-icon.png?v=5" alt="">Gank You Very Much</a>
+    <a href="../packtrack/"><img src="../img/packtrack-icon.png?v=5" alt="">PackTrack</a>
+    <a href="../compass/"><img src="../img/compass-icon.png?v=6" alt="">Compass Strip</a>
+    <a class="on" href="./"><img src="../img/pflow-icon.png?v=1" alt="">Profession Flowchart</a>
+  </nav>
+</div></header>
+<main class="wrap">
+  <div class="page-head">
+    <img src="../img/pflow-icon.png?v=1" alt="Profession Flowchart">
+    <div class="txt">
+      <div class="eyebrow">Professions · v0.3.1</div>
+      <h1>Profession Flowchart</h1>
+      <p class="muted">Every crafting chain as a flowchart beside your profession window: what a recipe needs, what you have, what to buy, and what to craft first, with a button on each step.</p>
+      <div class="btns"><span class="btn cf" style="opacity:.6;cursor:default" title="Coming to CurseForge">CurseForge: coming soon</span><a class="btn" href="#demo">Try the demo</a></div>
+    </div>
+  </div>
+
+  <section id="demo" style="padding-top:24px">
+    <div class="eyebrow">Live demo</div>
+    <h2>Craft your way up a leather chain</h2>
+    <p class="muted">A leatherworker at skill 120 with a few things in their bags. Pick a recipe, then click the blocks (or Next) to craft. Skin a beast or visit a vendor on the right to change what you carry.</p>
+    <div class="pf">
+      <div class="win" id="win">
+        <div class="hd">
+          <b>Profession Flowchart</b><span class="sk" id="skill"></span>
+          <label>Skill-ups <input type="range" id="bal" min="0" max="100" step="10" value="50" aria-label="Skill-ups or gold"> Gold</label>
+        </div>
+        <div class="list">
+          <div class="tabs">
+            <button class="btn small on" id="tBest">Best picks</button>
+            <button class="btn small" id="tBags">From my bags</button>
+            <span class="hint2" id="lhead"></span>
+          </div>
+          <div id="rows"></div>
+        </div>
+        <div class="chart" id="chart"><svg id="svg"></svg></div>
+        <div class="ft">
+          <button class="btn small" id="minus" aria-label="Fewer">−</button><span class="cnt" id="cnt">1</span><button class="btn small" id="plus" aria-label="More">+</button>
+          <span class="sum" id="sum"></span>
+          <button class="btn small primary go" id="next">Next</button>
+        </div>
+      </div>
+      <aside class="bags">
+        <h3>Your bags</h3>
+        <div id="bagList"></div>
+        <div class="btns">
+          <button class="btn small" id="skin">Skin a beast</button>
+          <button class="btn small" id="vendor">Visit a vendor (salt, thread)</button>
+          <button class="btn small" id="reset">Start over</button>
+        </div>
+        <div class="log" id="log" aria-live="polite"></div>
+      </aside>
+    </div>
+  </section>
+
+  <section id="features" style="padding-top:10px;scroll-margin-top:80px">
+    <div class="eyebrow">What it does</div>
+    <h2>The whole chain, one click per step</h2>
+    <div class="grid3" style="margin-top:20px">
+      <div class="tile"><h3>See the chain</h3><p>The recipe at the top and everything it needs below: what you have, what to buy, and what you can craft from other materials, like light leather into medium into gloves.</p></div>
+      <div class="tile"><h3>Click to craft</h3><p>Every craft block is a button that makes as many as your materials allow. Next always points at the step to do now.</p></div>
+      <div class="tile"><h3>Best picks</h3><p>Your recipes ranked by skill-up chance and profit. Slide toward skill-ups or gold to choose what matters more.</p></div>
+      <div class="tile"><h3>From my bags</h3><p>What you can make right now from what you carry, and what you're close to, like "only need 2 Salt".</p></div>
+      <div class="tile"><h3>Real prices</h3><p>Auction prices from Auctionator and vendor prices remembered from your visits, so you know what the missing parts cost.</p></div>
+      <div class="tile"><h3>Every profession</h3><p>Leatherworking, Tailoring, Blacksmithing, Alchemy, Engineering, Cooking, First Aid and smelting. It docks beside the profession window.</p></div>
+    </div>
+    <p class="note" style="margin-top:20px">Type <b>/pflow</b> to show or hide the chart. Skill-up chances are estimates from the recipe color: orange always, yellow usually, green now and then, gray never. The demo uses sample recipes and prices.</p>
+  </section>
+</main>
+
+<footer><div class="wrap">
+  <div>Photronix Addons · free addons for World of Warcraft: Forever</div>
+  <div>World of Warcraft is a trademark of Blizzard Entertainment. These addons are fan-made and not affiliated with Blizzard.</div>
+</div></footer>
+
+<script>
+(() => {
+  // Sample data: items (name, color swatch, sale value, vendor price) and recipes with their skill colors
+  // (orange from t[0], yellow from t[1], green from t[2], gray from t[3]).
+  const I = {
+    LL: {n: 'Light Leather', c: '#a8743f', v: 40},
+    ML: {n: 'Medium Leather', c: '#8a5a2b', v: 120},
+    MH: {n: 'Medium Hide', c: '#6f5434', v: 90},
+    SA: {n: 'Salt', c: '#d8d4c8', vend: 50},
+    CT: {n: 'Coarse Thread', c: '#bfae8a', vend: 10},
+    FT: {n: 'Fine Thread', c: '#e6d7b0', vend: 100},
+    CMH: {n: 'Cured Medium Hide', c: '#9b7b52', v: 300},
+    MAK: {n: 'Medium Armor Kit', c: '#7a6a4a', v: 400},
+    TLG: {n: 'Toughened Leather Gloves', c: '#6a4a2a', v: 4600},
+    HB: {n: 'Hillman\'s Belt', c: '#5e4a33', v: 3200},
+    LAK: {n: 'Light Armor Kit', c: '#b08a5a', v: 30},
+  };
+  const R = [
+    {id: 'ML', n: 'Medium Leather', out: 'ML', t: [100, 115, 122, 130], reag: [['LL', 4]]},
+    {id: 'CMH', n: 'Cured Medium Hide', out: 'CMH', t: [115, 138, 146, 155], reag: [['MH', 1], ['SA', 1]]},
+    {id: 'MAK', n: 'Medium Armor Kit', out: 'MAK', t: [100, 115, 122, 130], reag: [['ML', 3], ['CT', 1]]},
+    {id: 'TLG', n: 'Toughened Leather Gloves', out: 'TLG', t: [120, 145, 157, 170], reag: [['ML', 4], ['CMH', 2], ['FT', 2]]},
+    {id: 'HB', n: 'Hillman\'s Belt', out: 'HB', t: [120, 145, 155, 165], reag: [['ML', 6], ['FT', 2]]},
+    {id: 'LAK', n: 'Light Armor Kit', out: 'LAK', t: [1, 30, 45, 60], reag: [['LL', 1]]},
+  ];
+  const maker = {}; R.forEach(r => maker[r.out] = r);
+  const DIFF = ['orange', 'yellow', 'green', 'gray'], CH = [1, .75, .25, 0];
+  const START = {LL: 22, MH: 2, SA: 1};
+  let bags, skill, target = 'TLG', count = 1, mode = 'best', balance = 50;
+  const $ = id => document.getElementById(id);
+
+  function reset() { bags = {...START}; skill = 120; count = 1; target = 'TLG'; say('Fresh start: skill 120.'); draw(); }
+  const have = k => bags[k] || 0;
+  const diff = r => skill < r.t[1] ? 0 : skill < r.t[2] ? 1 : skill < r.t[3] ? 2 : 3;
+  const money = c => { c = Math.round(Math.abs(c)); const g = Math.floor(c / 10000), s = Math.floor(c / 100) % 100, cc = c % 100;
+    return g ? `${g}g ${s}s` : s ? `${s}s${cc ? ' ' + cc + 'c' : ''}` : `${cc}c`; };
+  const buyCost = k => I[k].vend || I[k].v;
+  const craftable = r => Math.min(...r.reag.map(([k, n]) => Math.floor(have(k) / n)));
+
+  // The plan: what a recipe needs, sharing out what's in your bags (the addon does the same).
+  function plan(rid, cnt) {
+    const pool = {};
+    const take = (k, n) => { if (pool[k] === undefined) pool[k] = have(k); const t = Math.min(pool[k], n); pool[k] -= t; return t; };
+    const res = {skill: 0, cost: 0, buy: [], rawNeed: 0, rawHave: 0};
+    function node(k, need, depth, path, root) {
+      const n = {k, need, depth, kids: []};
+      let r;
+      if (root) { r = root; n.have = 0; n.crafts = need; }
+      else {
+        n.have = take(k, need);
+        const miss = need - n.have;
+        if (miss > 0 && maker[k] && !path[k]) { r = maker[k]; n.crafts = miss; }
+        else {
+          n.buy = miss; res.rawNeed += need; res.rawHave += n.have;
+          if (miss > 0) { n.cost = buyCost(k) * miss; n.where = I[k].vend ? 'vendor' : 'AH'; res.cost += n.cost; res.buy.push(n); }
+        }
+      }
+      if (r) {
+        n.r = r; res.skill += n.crafts * CH[diff(r)];
+        path[k] = true;
+        for (const [g, q] of r.reag) n.kids.push(Object.assign(node(g, q * n.crafts, depth + 1, path), {per: q}));
+        delete path[k];
+        n.make = Math.min(n.crafts, craftable(r));
+      }
+      return n;
+    }
+    const r = R.find(x => x.id === rid);
+    res.root = node(r.out, cnt, 0, {}, r);
+    res.value = (I[r.out].v || 0) * cnt;
+    res.profit = res.value - res.cost;
+    return res;
+  }
+  function canMake(rid) {
+    const ok = q => plan(rid, q).buy.length === 0;
+    if (!ok(1)) return 0;
+    let q = 1; while (q < 99 && ok(q + 1)) q++;
+    return q;
+  }
+
+  function listItems() {
+    const all = R.map(r => Object.assign(plan(r.id, 1), {r}));
+    if (mode === 'bags') {
+      const out = all.map(p => Object.assign(p, {cover: p.rawNeed ? p.rawHave / p.rawNeed : 0, can: p.buy.length ? 0 : canMake(p.r.id)}))
+        .filter(p => p.can > 0 || p.cover > 0);
+      return out.sort((a, b) => (b.can > 0) - (a.can > 0) || b.cover - a.cover || b.skill - a.skill);
+    }
+    const picks = all.filter(p => p.skill > 0 || p.profit > 0);
+    const ms = Math.max(0, ...picks.map(p => p.skill)), mg = Math.max(0, ...picks.map(p => Math.abs(p.profit)));
+    const b = balance / 100;
+    picks.forEach(p => p.score = (1 - b) * (ms ? p.skill / ms : 0) + b * (mg ? p.profit / mg : 0));
+    return picks.sort((a, c) => c.score - a.score);
+  }
+  function onlyNeed(p) {
+    const b = p.buy;
+    if (b.length === 1) return `only need ${b[0].buy} ${I[b[0].k].n}`;
+    if (b.length === 2) return `only need ${b[0].buy} ${I[b[0].k].n}, ${b[1].buy} ${I[b[1].k].n}`;
+    return `only need ${b.reduce((s, x) => s + x.buy, 0)} more items`;
+  }
+
+  function drawList() {
+    const items = listItems();
+    $('tBest').classList.toggle('on', mode === 'best'); $('tBags').classList.toggle('on', mode === 'bags');
+    $('lhead').textContent = mode === 'bags' ? 'whole chain from your bags' : 'skill-ups · gold, per craft';
+    const rows = $('rows'); rows.innerHTML = '';
+    if (!items.length) { rows.innerHTML = '<div class="empty">Nothing yet: none of your recipes use what is in your bags.</div>'; return; }
+    for (const p of items.slice(0, 5)) {
+      const b = document.createElement('button');
+      b.className = 'row' + (p.r.id === target ? ' sel' : '');
+      let sub;
+      if (mode === 'bags') sub = p.can > 0 ? `<span class="good">can make ${p.can}</span>` : `<span class="c-yellow">${onlyNeed(p)}</span> <span class="dim">${p.cost ? money(p.cost) : ''}</span>`;
+      else sub = `${p.skill.toFixed(1)} skill <span class="${p.profit >= 0 ? 'good' : 'bad'}">${p.profit >= 0 ? '+' : '-'}${money(p.profit)}</span>`;
+      b.innerHTML = `<span class="ic" style="background:${I[p.r.out].c}"></span><span class="nm c-${DIFF[diff(p.r)]}">${p.r.n}</span><span class="sub">${sub}</span>`;
+      b.onclick = () => { if (mode === 'bags' && p.can > 0) count = p.can; target = p.r.id; draw(); };
+      rows.appendChild(b);
+    }
+  }
+
+  // Top-down layout; plain materials side by side under one recipe share a column.
+  const NW = 168, NH = 62, CG = 14, RG = 30;
+  let nextNode = null;
+  function drawChart(p) {
+    const chart = $('chart'), svg = $('svg');
+    chart.querySelectorAll('.node,.per').forEach(e => e.remove());
+    svg.innerHTML = '';
+    let cols = 0, rowsMax = 0;
+    (function measure(n, row) {
+      n.row = row; rowsMax = Math.max(rowsMax, row);
+      if (!n.kids.length) { n.slot = cols++; return; }
+      let lo = null, hi = null;
+      for (let i = 0; i < n.kids.length;) {
+        let j = i;
+        if (!n.kids[i].kids.length) while (j + 1 < n.kids.length && !n.kids[j + 1].kids.length) j++;
+        if (j > i) {
+          const s = cols++;
+          for (let q = i; q <= j; q++) Object.assign(n.kids[q], {slot: s, row: row + 1 + q - i, stacked: true}), rowsMax = Math.max(rowsMax, row + 1 + q - i);
+          lo ??= s; hi = s;
+        } else { measure(n.kids[i], row + 1); lo ??= n.kids[i].slot; hi = n.kids[i].slot; }
+        i = j + 1;
+      }
+      n.slot = (lo + hi) / 2;
+    })(p.root, 0);
+    const cw = cols * (NW + CG) - CG + 30, ch = (rowsMax + 1) * (NH + RG) - RG + 30;
+    const ox = Math.max(15, (chart.clientWidth - cw) / 2 + 15), oy = 15;
+    svg.setAttribute('width', Math.max(cw, chart.clientWidth)); svg.setAttribute('height', Math.max(ch, chart.clientHeight - 2));
+    nextNode = null; let nd = -1;
+    (function walk(n) { n.kids.forEach(walk); if (n.make > 0 && n.depth > nd) { nextNode = n; nd = n.depth; } })(p.root);
+    const line = (x1, y1, x2, y2, done) => {
+      const l = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      Object.entries({x1, y1, x2, y2, stroke: done ? '#6fae6f' : '#8c7a60', 'stroke-width': 2}).forEach(([a, v]) => l.setAttribute(a, v));
+      svg.appendChild(l);
+    };
+    const per = (x, y, t) => { const s = document.createElement('span'); s.className = 'per'; s.style.left = x + 'px'; s.style.top = y + 'px'; s.textContent = t; chart.appendChild(s); };
+    (function draw(n) {
+      n.x = ox + n.slot * (NW + CG); n.y = oy + n.row * (NH + RG);
+      const b = document.createElement('button');
+      b.className = 'node' + (n.r ? ' craft' : '') + (n === nextNode ? ' next' : '');
+      const col = n.r ? {orange: '#ff8040', yellow: '#e8d840', green: '#40c040', gray: '#909090'}[DIFF[diff(n.r)]] : '#9e8561';
+      b.style.cssText = `left:${n.x}px;top:${n.y}px;border-color:${col}`;
+      const tally = n.depth === 0 ? `make ${n.need} (have ${have(n.k)})` : `have ${n.have} / need ${n.need}`;
+      const tcls = n.depth === 0 ? 'dim' : n.have >= n.need ? 'good' : 'bad';
+      let act;
+      if (n.r) act = n.make > 0 ? `<span class="c-yellow">Make ${n.make}</span>${n.make < n.crafts ? ` <span class="dim">of ${n.crafts}</span>` : ''}` : `<span class="dim">${n.crafts} to make, parts first</span>`;
+      else if (n.buy > 0) act = `<span class="bad">buy ${n.buy}</span> <span class="dim">${money(n.cost)} ${n.where}</span>`;
+      else act = '<span class="good">ready</span>';
+      b.innerHTML = `<span class="ic" style="background:${I[n.k].c}"></span><span class="nm">${I[n.k].n}</span><span class="ta ${tcls}">${tally}</span><span class="ac">${act}</span>`;
+      if (n.r) b.onclick = () => craft(n); else b.tabIndex = -1;
+      $('chart').appendChild(b);
+      for (const k of n.kids) {
+        draw(k);
+        const done = k.have >= k.need, px = n.x + NW / 2, py = n.y + NH;
+        if (k.stacked) {
+          const tx = k.x - 7, my = k.y + NH / 2, ty = py + RG / 2;
+          line(px, py, px, ty, done); line(px, ty, tx, ty, done); line(tx, ty, tx, my, done); line(tx, my, k.x, my, done);
+          per(k.x + NW - 46, k.y - 16, `x${k.per} each`);
+        } else {
+          line(k.x + NW / 2, k.y, px, py, done);
+          per((k.x + NW / 2 + px) / 2 + 6, (k.y + py) / 2 - 9, `x${k.per} each`);
+        }
+      }
+    })(p.root);
+  }
+
+  function craft(n) {
+    if (!n || !(n.make > 0)) return;
+    const r = n.r, times = n.make;
+    let ups = 0;
+    for (let i = 0; i < times; i++) {
+      r.reag.forEach(([k, q]) => bags[k] = have(k) - q);
+      bags[r.out] = have(r.out) + 1;
+      if (skill < 150 && Math.random() < CH[diff(r)]) { skill++; ups++; }
+    }
+    say(`Made ${times} ${I[r.out].n}.` + (ups ? ` Skill +${ups} (now ${skill}).` : ' No skill-up this time.'));
+    draw();
+  }
+  const say = t => { $('log').textContent = t; };
+
+  function draw() {
+    $('skill').textContent = `Leatherworking ${skill} / 150`;
+    drawList();
+    const p = plan(target, count);
+    drawChart(p);
+    const r = R.find(x => x.id === target);
+    $('cnt').textContent = count;
+    $('sum').innerHTML = `<b>${r.n}</b> x${count} · skill-ups ~${p.skill.toFixed(1)} · buy ${p.buy.length ? money(p.cost) : 'nothing'} · worth ${money(p.value)} · <span class="${p.profit >= 0 ? 'good' : 'bad'}">profit ${p.profit >= 0 ? '' : '-'}${money(p.profit)}</span>`;
+    const nb = $('next');
+    nb.disabled = !nextNode;
+    nb.textContent = nextNode ? `Next: make ${nextNode.make} ${I[nextNode.k].n}` : p.buy.length ? 'Buy the missing parts first' : 'Nothing to craft';
+    $('bagList').innerHTML = Object.keys(I).filter(k => have(k) > 0).map(k => `<div class="bag"><span class="ic" style="background:${I[k].c}"></span>${I[k].n}<span class="n">${have(k)}</span></div>`).join('') || '<div class="empty">Empty</div>';
+  }
+
+  $('bal').oninput = e => { balance = +e.target.value; draw(); };
+  $('tBest').onclick = () => { mode = 'best'; draw(); };
+  $('tBags').onclick = () => { mode = 'bags'; draw(); };
+  $('minus').onclick = () => { count = Math.max(1, count - 1); draw(); };
+  $('plus').onclick = () => { count = Math.min(20, count + 1); draw(); };
+  $('next').onclick = () => craft(nextNode);
+  $('skin').onclick = () => { bags.LL = have('LL') + 3; let t = 'Skinned 3 Light Leather'; if (Math.random() < .5) { bags.MH = have('MH') + 1; t += ' and a Medium Hide'; } say(t + '.'); draw(); };
+  $('vendor').onclick = () => {
+    const p = plan(target, count), got = [];
+    for (const b of p.buy) if (I[b.k].vend) { bags[b.k] = have(b.k) + b.buy; got.push(`${b.buy} ${I[b.k].n}`); }
+    say(got.length ? `Bought ${got.join(', ')}.` : 'Nothing this recipe needs is sold by vendors.');
+    draw();
+  };
+  $('reset').onclick = reset;
+  addEventListener('resize', draw);
+  reset();
+})();
+</script>
+</body>
+</html>
