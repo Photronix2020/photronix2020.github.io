@@ -17,6 +17,7 @@
 .tip b{display:block;color:var(--gold)}
 .controls label{display:flex;align-items:center;gap:6px;font-size:.88rem;color:var(--muted);cursor:pointer}
 .controls .sep{flex:1}
+.clip{width:100%;display:block;border-radius:10px;background:#000}
 .pill{font:600 .8rem var(--body);color:var(--muted)}
 .btn.on{border-color:var(--teal);background:rgba(105,233,172,.12)}
 @media (max-width:640px){#cs{height:470px}}
@@ -47,7 +48,7 @@
     <div class="eyebrow">Live demo</div>
     <h2>Turn around and watch the markers</h2>
     <p class="muted">Drag the view, or use <span class="kbd">A</span> <span class="kbd">D</span> to turn and <span class="kbd">W</span> <span class="kbd">S</span> to walk. The map below shows where everything really is. The positions wobble the way map data does; switch smoothing off to see the jitter other compasses show.</p>
-    <a class="demo-banner" href="#features"><b>Animated version of the addon</b><span>What it shows in game &darr;</span></a>
+    <a class="demo-banner" href="#ingame"><b>Animated version of the addon</b><span>Scroll down for the real in-game version &darr;</span></a>
     <div id="cs" class="stage joined"><canvas id="cv"></canvas><div class="tip" id="tip"></div></div>
     <div class="controls">
       <button class="btn small on" id="bSmooth">Smoothing: on</button>
@@ -69,6 +70,10 @@
       <div class="tile"><h3>Name and distance</h3><p>Face a marker to see its name and distance under it, or point at any marker with the mouse.</p></div>
       <div class="tile"><h3>Two looks</h3><p>The full-width Strip, or the Nordic skin: a short monochrome bar with knotwork ends. It fades out in dungeons, where the game hides your direction.</p></div>
     </div>
+    <h3 id="ingame" style="margin-top:36px;scroll-margin-top:80px">In game</h3>
+    <figure class="tile" style="margin:12px 0 0"><video class="clip" src="../img/compass-strip.mp4" autoplay muted loop playsinline preload="metadata" aria-label="The Strip skin turning in Stormwind"></video><p style="margin-top:10px">The Strip skin in Stormwind: the flight point stays put while you turn, with its name and distance under it.</p></figure>
+    <figure class="tile" style="margin:12px 0 0"><video class="clip" src="../img/compass-nordic.mp4" autoplay muted loop playsinline preload="metadata" aria-label="The Nordic skin turning in Stormwind"></video><p style="margin-top:10px">The Nordic skin: the same compass as a short monochrome bar with knotwork ends.</p></figure>
+
     <h3 style="margin-top:36px">Why another compass?</h3>
     <p class="muted" style="max-width:720px">I tried the compass addons out there and kept running into the same few problems, so Compass Strip was built to fix them.</p>
     <div class="grid3" style="margin-top:12px">
