@@ -24,9 +24,11 @@
 .ico svg{width:100%;height:100%;display:block}
 .ico.faded{opacity:.28;filter:grayscale(1)}
 .ico.rot{opacity:.8;filter:none}
-.ico.red{border-color:#ff3b2a;transform:scale(1.35);box-shadow:0 0 16px rgba(255,59,42,.9);z-index:3;animation:pulse .5s infinite alternate}
-.ico.wait{border-color:#ffc83a;box-shadow:0 0 14px rgba(255,200,58,.7);z-index:2;opacity:1;filter:none}
-.ico.up{border-color:#4fe07f;box-shadow:0 0 12px rgba(79,224,127,.7);transform:scale(1.1);z-index:2;opacity:1;filter:none}
+:root{--cast:#ff3b2a;--castA:rgba(255,59,42,.9);--wait:#ffc83a;--waitA:rgba(255,200,58,.7);--up:#4fe07f;--upA:rgba(79,224,127,.7)}
+body.traffic{--cast:#4fe07f;--castA:rgba(79,224,127,.9);--wait:#ff3b2a;--waitA:rgba(255,59,42,.7);--up:#ffc83a;--upA:rgba(255,200,58,.7)}
+.ico.red{border-color:var(--cast);transform:scale(1.35);box-shadow:0 0 16px var(--castA);z-index:3;animation:pulse .5s infinite alternate}
+.ico.wait{border-color:var(--wait);box-shadow:0 0 14px var(--waitA);z-index:2;opacity:1;filter:none}
+.ico.up{border-color:var(--up);box-shadow:0 0 12px var(--upA);transform:scale(1.1);z-index:2;opacity:1;filter:none}
 .ico.gold{border-color:#ffb020;opacity:.9;filter:none}
 .ico .cd{position:absolute;inset:0;background:rgba(0,0,0,.6);transform-origin:bottom;pointer-events:none}
 .ico .t{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:700 .8rem var(--display);color:#fff;text-shadow:0 1px 3px #000;pointer-events:none}
@@ -66,7 +68,7 @@
   <div class="page-head">
     <img src="../img/forecast-icon.png?v=5" alt="ForeCast">
     <div class="txt">
-      <div class="eyebrow">Rotation coach · every class · v0.8.0</div>
+      <div class="eyebrow">Rotation coach · every class · v0.8.2</div>
       <h1>ForeCast</h1>
       <p class="muted">See your next cast before you need it. ForeCast knows your class, spec, level, spell ranks, talents, form and pet, and shows what to press next, and when, from level 1 to 60.</p>
       <div class="btns"><a class="btn cf" href="https://www.curseforge.com/wow/addons/forecast">Download on CurseForge</a><a class="btn wago" href="https://addons.wago.io/addons/forecast">Get it on Wago</a><a class="btn" href="https://photronix2020.github.io/ForeCast-Wiki/">Read the wiki</a><a class="btn" href="#demo">Try the demo</a></div>
@@ -76,9 +78,9 @@
   <section id="demo" style="padding-top:24px">
     <div class="eyebrow">Live demo</div>
     <h2>Play a hunter pull</h2>
-    <p class="muted">A small recreation of ForeCast on a hunter. Click the red spell (on the halo, the window or your bar) or press its key. Watch green line up the next shot while you wait on Auto Shot.</p>
+    <p class="muted">A small recreation of ForeCast on a hunter. Click the <span class="w-cast">red</span> spell (on the halo, the window or your bar) or press its key. Watch <span class="w-up">green</span> line up the next shot while you wait on Auto Shot.</p>
     <div class="legend" style="margin:10px 0 16px">
-      <span style="--c:#ff3b2a">Red: cast now</span><span style="--c:#4fe07f">Green: next up</span><span style="--c:#ffc83a">Yellow: wait / gold: big cooldown ready</span>
+      <span style="--c:var(--cast)"><b class="w-cast">Red</b>: cast now</span><span style="--c:var(--up)"><b class="w-up">Green</b>: next up</span><span style="--c:var(--wait)"><b class="w-wait">Yellow</b>: wait</span><span style="--c:#ffb020">Gold: big cooldown ready</span>
     </div>
     <a class="demo-banner" href="#ingame"><b>Animated version of the addon</b><span>Scroll down for the real in-game version &darr;</span></a>
     <div id="fc" class="stage joined">
@@ -97,6 +99,7 @@
       <button class="btn small" id="auto">Let it play itself</button>
       <button class="btn small" id="reset">New mob</button>
       <label class="hint"><input type="checkbox" id="gauge" checked> DPS gauge over the halo</label>
+      <label class="hint"><input type="checkbox" id="traffic"> Traffic-light colors (green = cast now)</label>
       <span class="hint">Keys <span class="kbd">1</span>–<span class="kbd">6</span> cast from the bar.</span>
     </div>
   </section>
@@ -108,6 +111,7 @@
       <div class="tile"><h3>Red: cast now</h3><p>Turns red inside your spell queue window, so your press fires the instant the ability is ready.</p></div>
       <div class="tile"><h3>Green: next up</h3><p>The spell that turns red next, shown at the same time as red or yellow, counting down so you're ready.</p></div>
       <div class="tile"><h3>Yellow: wait</h3><p>Let Auto Shot land, let your wand shoot, or hold your damage for threat. Gold marks a big cooldown that's ready: your call.</p></div>
+      <div class="tile"><h3>Prefer traffic lights?</h3><p>One click under Settings › Look › Colors: green means cast now, yellow is next up and red means wait. Try it in the demo above.</p></div>
       <div class="tile"><h3>Combat halo</h3><p>Glowing arcs around your character with your spells on the ring, power and pet health rings, range icon and a DPS gauge.</p></div>
       <div class="tile"><h3>Every class</h3><p>Rotations for all nine classes and tanks, with racials, forms, stances and pets, adapting the moment you learn something new.</p></div>
       <div class="tile"><h3>Learns from your fights</h3><p>Fight lengths, damage per cast and your reaction time, to plan the next pull better. HOW shows what following the cues is worth.</p></div>
@@ -245,6 +249,15 @@ const GLEN=gLit.getTotalLength();
 const tick=document.createElementNS(NS,'line');tick.setAttribute('x1',0);tick.setAttribute('x2',0);tick.setAttribute('y1',-GR[1]-8);tick.setAttribute('y2',-GR[1]+8);tick.setAttribute('stroke','#fff');tick.setAttribute('stroke-width',2);halo.appendChild(tick);
 const gLbl=document.createElementNS(NS,'text');gLbl.setAttribute('x',0);gLbl.setAttribute('y',-GR[1]-14);gLbl.setAttribute('text-anchor','middle');gLbl.setAttribute('font-size','13');gLbl.setAttribute('font-weight','700');gLbl.setAttribute('fill','#ccc');gLbl.setAttribute('font-family','Space Grotesk');halo.appendChild(gLbl);
 const COL={RED:'#ff3b2a',WAIT:'#ffc83a',GREEN:'#4fe07f',IDLE:'#8a80c0'};
+// The Colors setting: red = cast now (default) or traffic light (green = cast now, yellow next, red wait).
+const SCHEME={classic:{RED:'#ff3b2a',WAIT:'#ffc83a',GREEN:'#4fe07f',w:['Red','Yellow','Green']},traffic:{RED:'#4fe07f',WAIT:'#ff3b2a',GREEN:'#ffc83a',w:['Green','Red','Yellow']}};
+function setScheme(name){
+  const sc=SCHEME[name];Object.assign(COL,{RED:sc.RED,WAIT:sc.WAIT,GREEN:sc.GREEN});
+  document.body.classList.toggle('traffic',name==='traffic');
+  const word=(cls,w)=>document.querySelectorAll(cls).forEach(e=>e.textContent=e.tagName==='B'?w:w.toLowerCase());
+  word('.w-cast',sc.w[0]);word('.w-wait',sc.w[1]);word('.w-up',sc.w[2]);
+}
+document.getElementById('traffic').addEventListener('change',e=>setScheme(e.target.checked?'traffic':'classic'));
 function band(r){return r<.6?'#f23333':r<.95?'#ff801f':r<=1.05?'#ffd633':r<1.25?'#33e673':'#b366ff';}
 let greenFrom=null;
 function draw(d){
