@@ -71,7 +71,7 @@
   <div class="page-head">
     <img src="../img/pflow-icon.png?v=2" alt="Profession Flowchart">
     <div class="txt">
-      <div class="eyebrow">Professions · v0.7.0</div>
+      <div class="eyebrow">Professions · v0.7.1</div>
       <h1>Profession Flowchart</h1>
       <p class="muted">Every crafting chain as a flowchart beside your profession window: what a recipe needs, what you have, what to buy, and what to craft first, with a button on each step.</p>
       <div class="btns"><a class="btn cf" href="https://www.curseforge.com/wow/addons/profession-flowchart">Download on CurseForge</a><a class="btn" href="#demo">Try the demo</a></div>
@@ -242,7 +242,7 @@
   // Craft it (and the gain over selling the mats), sell the mats instead (and how much more), or a loss.
   function verdict(p) {
     if (p.profit >= 0) return `<span class="good" title="Craft and sell">&#9874; +${money(p.profit)}</span>`;
-    if (p.owned > 0) return `<span class="c-yellow" title="Sell the materials instead">sell mats +${money(-p.profit)}</span>`;
+    if (p.owned > 0) return `<span class="c-yellow" title="Sell the materials instead">sell mats on AH +${money(-p.profit)}</span>`;
     return `<span class="bad">loses ${money(-p.profit)}</span>`;
   }
   function drawList() {
@@ -350,7 +350,7 @@
     drawChart(p);
     const r = R.find(x => x.id === target);
     $('cnt').textContent = count;
-    $('sum').innerHTML = `<b>${r.n}</b> x${count} · skill-ups ~${p.skill.toFixed(1)} · buy ${p.buy.length ? money(p.cost) : 'nothing'} · sells for ${money(p.value)} · ${p.profit >= 0 ? `<span class="good">crafting earns +${money(p.profit)}</span>` : p.owned > 0 ? `<span class="c-yellow">better to sell the mats: +${money(-p.profit)}</span>` : `<span class="bad">loses ${money(-p.profit)}</span>`}`;
+    $('sum').innerHTML = `<b>${r.n}</b> x${count} · skill-ups ~${p.skill.toFixed(1)} · buy ${p.buy.length ? money(p.cost) : 'nothing'} · sells for ${money(p.value)} · ${p.profit >= 0 ? `<span class="good">crafting earns +${money(p.profit)}</span>` : p.owned > 0 ? `<span class="c-yellow">better to sell your mats on the AH: +${money(-p.profit)}</span>` : `<span class="bad">loses ${money(-p.profit)}</span>`}`;
     const nb = $('next');
     nb.disabled = !nextNode;
     nb.textContent = nextNode ? `Next: make ${nextNode.make} ${I[nextNode.k].n}` : p.buy.length ? 'Buy the missing parts first' : 'Nothing to craft';
